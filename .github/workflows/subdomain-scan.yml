@@ -24,10 +24,10 @@ jobs:
             ./dependency-install.sh
 
   scanning_subdomain:
-    runs-on: selt-hosted
-    needs: [install_dependencies]
+    runs-on: self-hosted
+    needs: install_dependencies
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v3
         
       - name: listing directory

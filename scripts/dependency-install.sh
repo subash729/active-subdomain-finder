@@ -181,7 +181,7 @@ install_subfinder(){
 
 }
 
-install_amass(){
+install_amass() {
     if check_amass_installed; then
         return
     fi
