@@ -76,6 +76,7 @@ prerequisite_setup() {
 }
 
 scanning_subdomain() {
+    print_header "1 - SCAN"
     print_separator
     echo "Domains to be scanned:"
     print_init "$domains"
@@ -96,7 +97,7 @@ scanning_subdomain() {
 }
 
 filtering_duplicate_and_inactive(){
-    print_header "DATA CLEANING"
+    print_header "2 - DATA CLEAN"
     print_separator
     print_init "STEP -1 : Filtering duplicate sub-domains in progress..."
     index=0
@@ -128,7 +129,7 @@ filtering_duplicate_and_inactive(){
 
 deleting_others_scan() {
     print_separator
-    print_init "STEP -2 : Finding active subdomains in progress..."
+    print_init "STEP -3 : Deleting other subdomains files in progress..."
     rm -rf $scan_store_dir/*initial*.txt 
     # rm -rf $scan_store_dir/*unique*.txt
 }
