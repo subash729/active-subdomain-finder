@@ -96,6 +96,7 @@ scanning_subdomain() {
 }
 
 filtering_duplicate_and_inactive(){
+    print_header "DATA CLEANING"
     print_separator
     print_init "STEP -1 : Filtering duplicate sub-domains in progress..."
     index=0
@@ -108,10 +109,9 @@ filtering_duplicate_and_inactive(){
         sort "$subdomain_single_file" | uniq >> "$unique_subdomain_file"
         index=$((index + 1))
     done
+    print_success "Unique Domain are extracted Sucessfully !!! "
     print_separator
-   
 
-    print_separator
     print_init "STEP -2 : Finding active subdomains in progress..."
     index=0
     for domain in $domains; do
@@ -121,13 +121,14 @@ filtering_duplicate_and_inactive(){
         # Add logic to filter active subdomains and write to $active_subdomain_file
         index=$((index + 1))
     done
-    
-    print_success "Unique Domain are extracted Sucessfully !!! "
+
     print_separator
     echo -e "\n\n"
 }
 
 deleting_others_scan() {
+    print_separator
+    print_init "STEP -2 : Finding active subdomains in progress..."
     rm -rf $scan_store_dir/*initial*.txt 
     # rm -rf $scan_store_dir/*unique*.txt
 }
