@@ -110,7 +110,6 @@ filtering_duplicate_and_inactive(){
         index=$((index + 1))
     done
     print_success "Unique Domain are extracted Sucessfully !!! "
-    print_separator
 
     print_init "STEP -2 : Finding active subdomains in progress..."
     index=0
@@ -121,7 +120,8 @@ filtering_duplicate_and_inactive(){
         # Add logic to filter active subdomains and write to $active_subdomain_file
         index=$((index + 1))
     done
-
+    print_separator
+    print_success "ACTIVE Domain are filtered Sucessfully !!! "
     print_separator
     echo -e "\n\n"
 }
