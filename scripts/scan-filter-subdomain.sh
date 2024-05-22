@@ -4,6 +4,11 @@ scan_store_dir=$HOME/information-gathering
 declare -a all_subdomain_array_files # for initial all subdomains
 declare -a unique_subdomain_array_files # removing duplicates and storing unique
 declare -a active_subdomain_array_files # filtering only active domains
+declare -a complete_subdomain_info_array_files
+
+
+
+
 
 # ------- LARGE Banner display section start
 
@@ -64,6 +69,8 @@ prerequisite_setup() {
         subdomain_single_file=$scan_store_dir/${domain}__initial_subdomain__$(date +%Y-%m-%d__%H:%M).txt
         unique_subdomain_file=$scan_store_dir/${domain}__unique_subdomain__$(date +%Y-%m-%d__%H:%M).txt
         active_subdomain_file=$scan_store_dir/${domain}__active_subdomain__$(date +%Y-%m-%d__%H:%M).txt
+        final_subdomain_file=$scan_store_dir/${domain}__scan_info__$(date +%Y-%m-%d__%H:%M).txt
+
         touch $subdomain_single_file
         touch $unique_subdomain_file
         touch $active_subdomain_file
@@ -72,6 +79,8 @@ prerequisite_setup() {
         all_subdomain_array_files+=("$subdomain_single_file")
         unique_subdomain_array_files+=("$unique_subdomain_file")
         active_subdomain_array_files+=("$active_subdomain_file")
+        complete_subdomain_info_array_files+=("$final_subdomain_file")
+        
     done
 }
 
@@ -98,7 +107,7 @@ scanning_subdomain() {
     echo -e "\n\n"
 }
 
-filtering_duplicate_and_inactive(){
+filtering_duplicate_and() {
     print_header "2 - DATA CLEAN"
     print_separator
     print_init "STEP -1 : Filtering duplicate sub-domains in progress..."
@@ -113,18 +122,39 @@ filtering_duplicate_and_inactive(){
         index=$((index + 1))
     done
     print_success "Unique Domain are extracted Sucessfully !!! "
+}
 
+active_domain_find() {
     print_init "STEP -2 : Finding active subdomains in progress..."
     index=0
     for domain in $domains; do
         print_intermediate "Processing $domain sub-domains in progress..."
         unique_subdomain_file=${unique_subdomain_array_files[$index]}
         active_subdomain_file=${active_subdomain_array_files[$index]}
+        final_subdomain_file=${complete_subdomain_info_array_files[$index]}
 
-        rm resume.cfg
-        httpx_argument="httpx-toolkit -probe -sc -cname  -ip -method  -title -location -td"
+        
+
+        
+        
         cat $unique_subdomain_file | httpx-toolkit >> $active_subdomain_file
-        cat $unique_subdomain_file | $httpx_argument -o "complete_info_$active_subdomain_file"
+        # Initial processing and counting
+        cat $unique_subdomain_file | httpx-toolkit >> $active_subdomain_file
+        site_count=$(wc -l < $active_subdomain_file)
+
+        # Conditional execution based on word count
+        if [ "$site_count" -gt 300 ]; then
+            print_init "Only $site_count sub-domains are active, Displaying detailed info in console"
+            httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
+            cat $unique_subdomain_file | $httpx_argument
+            
+        else
+            print_init "Huge no i.e. $site_count sub-domains are active, Running silently "
+            httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td"
+            cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file
+            
+        fi
+
         # Add logic to filter active subdomains and write to $active_subdomain_file
         index=$((index + 1))
     done
