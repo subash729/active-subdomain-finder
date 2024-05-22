@@ -88,6 +88,7 @@ scanning_subdomain() {
         print_intermediate "Scanning $domain in progress..."
         subdomain_single_file=${all_subdomain_array_files[$index]}
         subfinder -d $domain >> "$subdomain_single_file"
+        chaos -d tesla.com -v >> "$subdomain_single_file"
         print_separator
         index=$((index + 1))
     done

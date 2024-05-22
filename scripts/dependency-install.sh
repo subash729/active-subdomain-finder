@@ -240,6 +240,8 @@ install_chaos (){
         sudo apt-get update
 	    sudo apt install -y golang
         go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
+        sudo cp $HOME/go/bin/chaos  /usr/bin/
+
         
         print_separator
 
