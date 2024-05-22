@@ -91,11 +91,13 @@ scanning_subdomain() {
         echo -e "\n\n"
         index=$((index + 1))
     done
+    print_success "All Domain are are scanned Sucessfully !!! "
+    print_separator
 }
 
 filtering_duplicate_and_inactive(){
     print_separator
-    print_intermediate "STEP -1 : Filtering duplicate sub-domains in progress..."
+    print_init "STEP -1 : Filtering duplicate sub-domains in progress..."
     index=0
     for domain in $domains; do
         print_intermediate "Processing $domain sub-domains in progress..."
@@ -110,7 +112,7 @@ filtering_duplicate_and_inactive(){
     echo -e "\n\n"
 
     print_separator
-    print_intermediate "STEP -2 : Finding active subdomains in progress..."
+    print_init "STEP -2 : Finding active subdomains in progress..."
     index=0
     for domain in $domains; do
         print_intermediate "Processing $domain sub-domains in progress..."
@@ -119,10 +121,14 @@ filtering_duplicate_and_inactive(){
         # Add logic to filter active subdomains and write to $active_subdomain_file
         index=$((index + 1))
     done
+    echo -e "\n\n"
+    print_success "Unique Domain are extracted Sucessfully !!! "
+    print_separator
 }
 
 deleting_others_scan() {
-    echo "hello delete"
+    rm -rf $scan_store_dir/*initial*.txt 
+    # rm -rf $scan_store_dir/*unique*.txt
 }
 
 main() {

@@ -22,6 +22,14 @@ jobs:
         run: |
             chmod +x dependency-install.sh
             ./dependency-install.sh
+      - name: subfinder config setup
+        run: |
+          subfinder 
+      
+      - name: amass config setup
+        working-directory: "source code/amass" 
+        run: |
+          cp -r * $HOME/.config/amass/
 
   scanning_subdomain:
     runs-on: self-hosted
