@@ -1,0 +1,49 @@
+name: finding active sub-domain
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  install_dependencies:
+    runs-on: ubunut-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Create log directory
+        run: mkdir -p ~/Github-action/3-Tier/pipeline-log/tmp-log/tmp-log
+      
+      - name: Install dependencies
+        working-directory: scripts 
+        run: |
+            chmod +x dependency-install.sh
+            ./dependency-install.sh
+      - name: subfinder config setup
+        run: |
+          subfinder 
+      
+      - name: amass config setup
+        working-directory: "source code/amass" 
+        run: |
+          cp -r * $HOME/.config/amass/
+          ls -al
+
+      - name: chaos API key setup 
+        run: |
+            export PDCP_API_KEY=${{ secrets.CHAOS_API_KEY }}
+
+      - name: scanning and Filtering content
+        working-directory: scripts 
+        run : |
+          export PDCP_API_KEY=${{ secrets.CHAOS_API_KEY }}
+          chmod +x scan-filter-subdomain.sh
+          ./scan-filter-subdomain.sh
+
+      - name: reading file
+        run: |
+            ls -al
+

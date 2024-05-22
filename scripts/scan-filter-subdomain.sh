@@ -100,7 +100,7 @@ scanning_subdomain() {
         subfinder -d $domain >> "$subdomain_single_file"
         chaos -up 
         chaos -d tesla.com -v >> "$subdomain_single_file"
-        ffuf -u http://FUZZ.$domain -w "../source code/ffuf/n0kovo_subdomains_large.txt"
+        # ffuf -u http://FUZZ.$domain -w "../source code/ffuf/n0kovo_subdomains_large.txt"
         print_separator
         index=$((index + 1))
     done

@@ -91,7 +91,7 @@ check_amass_installed() {
 
 check_chaos_installed() {
     print_separator
-    print_header "3 - AMASS"
+    print_header "4 - CHAOS"
     print_separator
     sleep 2
     if command -v chaos &>/dev/null; then
@@ -104,7 +104,7 @@ check_chaos_installed() {
 }
 check_ffuf_installed() {
     print_separator
-    print_header "4 - ffuf"
+    print_header "5 - ffuf"
     print_separator
     sleep 2
     if command -v ffuf &>/dev/null; then
@@ -118,7 +118,7 @@ check_ffuf_installed() {
 
 check_httpx-toolkit_installed() {
     print_separator
-    print_header "4 - httpx-toolkit"
+    print_header "6 - httpx-toolkit"
     print_separator
     sleep 2
     if command -v httpx-toolkit &>/dev/null; then
