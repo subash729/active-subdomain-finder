@@ -32,6 +32,10 @@ jobs:
           cp -r * $HOME/.config/amass/
           ls -al
 
+      - name: chaos API key setup 
+        run: |
+            export PDCP_API_KEY=${{ secrets.CHAOS_API_KEY }}
+
   scanning_subdomain:
     runs-on: self-hosted
     needs: install_dependencies
@@ -47,3 +51,4 @@ jobs:
         run : |
           chmod +x scan-filter-subdomain.sh
           ./scan-filter-subdomain.sh
+

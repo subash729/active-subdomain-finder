@@ -61,9 +61,9 @@ prerequisite_setup() {
     fi
 
     for domain in $domains; do
-        subdomain_single_file=$scan_store_dir/${domain}-initial_subdomain$(date +%Y-%m-%d__%H:%M).txt
-        unique_subdomain_file=$scan_store_dir/${domain}-unique_subdomain$(date +%Y-%m-%d__%H:%M).txt
-        active_subdomain_file=$scan_store_dir/${domain}-active_subdomain$(date +%Y-%m-%d__%H:%M).txt
+        subdomain_single_file=$scan_store_dir/${domain}__initial_subdomain__$(date +%Y-%m-%d__%H:%M).txt
+        unique_subdomain_file=$scan_store_dir/${domain}__unique_subdomain__$(date +%Y-%m-%d__%H:%M).txt
+        active_subdomain_file=$scan_store_dir/${domain}__active_subdomain__$(date +%Y-%m-%d__%H:%M).txt
         touch $subdomain_single_file
         touch $unique_subdomain_file
         touch $active_subdomain_file
@@ -123,8 +123,6 @@ filtering_duplicate_and_inactive(){
     done
     print_separator
     print_success "ACTIVE Domain are filtered Sucessfully !!! "
-    print_separator
-    echo -e "\n\n"
 }
 
 deleting_others_scan() {
@@ -139,6 +137,8 @@ main() {
     scanning_subdomain
     filtering_duplicate_and_inactive
     deleting_others_scan
+
+    unset scan_store_dir all_subdomain_array_files unique_subdomain_array_files active_subdomain_array_files domains   
 }
 
 main

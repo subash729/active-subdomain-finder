@@ -89,6 +89,20 @@ check_amass_installed() {
     fi
 }
 
+check_chaos_installed() {
+    print_separator
+    print_header "3 - AMASS"
+    print_separator
+    sleep 2
+    if command -v chaos &>/dev/null; then
+        print_success "chaos is already installed"
+        return 0
+    else
+        print_fail "chaos Package is missing"
+        return 1
+    fi
+}
+
 # ---------- Package installation start -------------
 
 install_figlet() {
@@ -211,11 +225,43 @@ install_amass() {
 
 }
 
+install_chaos (){
+    if check_chaos_installed; then
+        return
+    fi
+
+    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
+    print_init "$os_description Detected on your system"
+    printf "\n"
+    print_intermediate "Installing chaos"
+    print_separator
+
+    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
+        sudo apt-get update
+	    sudo apt install -y golang
+        go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
+        print_separator
+
+        if [ $? -eq 0 ]; then
+            print_success "chaos is now installed"
+        else
+            print_fail "chaos to install Figlet"
+        fi
+
+    else
+        print_separator
+        print_fail "Unsupported Linux distribution"
+        exit 1
+    fi
+
+
+}
 
 main() {
     #first package installation
     install_figlet
     install_subfinder
     install_amass
+    install_chaos
 }
 main
