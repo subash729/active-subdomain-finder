@@ -107,7 +107,7 @@ scanning_subdomain() {
     echo -e "\n\n"
 }
 
-filtering_duplicate_and() {
+filtering_duplicate_sub_domain() {
     print_header "2 - DATA CLEAN"
     print_separator
     print_init "STEP -1 : Filtering duplicate sub-domains in progress..."
@@ -133,10 +133,6 @@ active_domain_find() {
         active_subdomain_file=${active_subdomain_array_files[$index]}
         final_subdomain_file=${complete_subdomain_info_array_files[$index]}
 
-        
-
-        
-        
         cat $unique_subdomain_file | httpx-toolkit >> $active_subdomain_file
         # Initial processing and counting
         cat $unique_subdomain_file | httpx-toolkit >> $active_subdomain_file
@@ -147,7 +143,7 @@ active_domain_find() {
             print_init "Only $site_count sub-domains are active, Displaying detailed info in console"
             httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
             cat $unique_subdomain_file | $httpx_argument
-            
+
         else
             print_init "Huge no i.e. $site_count sub-domains are active, Running silently "
             httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td"
@@ -172,7 +168,8 @@ deleting_others_scan() {
 main() {
     prerequisite_setup
     scanning_subdomain
-    filtering_duplicate_and_inactive
+    filtering_duplicate_sub_domain
+    active_domain_find
     deleting_others_scan
 
     unset scan_store_dir all_subdomain_array_files unique_subdomain_array_files 
