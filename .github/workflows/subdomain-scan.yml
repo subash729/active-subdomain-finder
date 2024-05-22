@@ -49,6 +49,7 @@ jobs:
       - name: scanning and Filtering content
         working-directory: scripts 
         run : |
+          export PDCP_API_KEY=${{ secrets.CHAOS_API_KEY }}
           chmod +x scan-filter-subdomain.sh
           ./scan-filter-subdomain.sh
 
