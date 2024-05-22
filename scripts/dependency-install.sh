@@ -102,6 +102,20 @@ check_chaos_installed() {
         return 1
     fi
 }
+check_ffuf_installed() {
+    print_separator
+    print_header "4 - ffuf"
+    print_separator
+    sleep 2
+    if command -v ffuf &>/dev/null; then
+        print_success "ffuf is already installed"
+        return 0
+    else
+        print_fail "ffuf Package is missing"
+        return 1
+    fi
+}
+
 check_httpx-toolkit_installed() {
     print_separator
     print_header "4 - httpx-toolkit"
@@ -272,6 +286,35 @@ install_chaos (){
 
 
 }
+install_ffuf () {
+    if check_ffuf_installed; then
+        return
+    fi
+
+    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
+    print_init "$os_description Detected on your system"
+    printf "\n"
+    print_intermediate "Installing ffuf"
+    print_separator
+
+    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
+        sudo apt-get update
+        sudo apt install -y ffuf
+        print_separator
+
+        if [ $? -eq 0 ]; then
+            print_success "ffuf is now installed"
+        else
+            print_fail "ffuf to install Figlet"
+        fi
+
+    else
+        print_separator
+        print_fail "Unsupported Linux distribution"
+        exit 1
+    fi
+}
+
 install_httpx-toolkit () {
     if check_httpx-toolkit_installed; then
         return
@@ -311,6 +354,7 @@ main() {
     install_subfinder
     install_amass
     install_chaos
+    install_ffuf
 
     # tool to find active or up webserver
     install_httpx-toolkit 

@@ -100,6 +100,7 @@ scanning_subdomain() {
         subfinder -d $domain >> "$subdomain_single_file"
         chaos -up 
         chaos -d tesla.com -v >> "$subdomain_single_file"
+        ffuf -u http://FUZZ.$domain -w "../source code/ffuf/n0kovo_subdomains_large.txt"
         print_separator
         index=$((index + 1))
     done
@@ -129,7 +130,7 @@ active_domain_find() {
     print_init "STEP -2 : Finding active subdomains in progress..."
     index=0
     for domain in $domains; do
-        print_intermediate "Processing #### $domain #### sub-domains in progress..."
+        print_intermediate "Processing sub-domains of #---- https://$domain ---#  in progress..."
         unique_subdomain_file=${unique_subdomain_array_files[$index]}
         active_subdomain_file=${active_subdomain_array_files[$index]}
         final_subdomain_file=${complete_subdomain_info_array_files[$index]}
