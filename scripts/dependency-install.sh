@@ -210,7 +210,7 @@ install_subfinder(){
         echo "------------- home directory --------------"
         ls $HOME
         echo "------------ home go directory --------------"
-        tree $HOME/go/
+        tree -L 3 $HOME/go/
         sudo cp $HOME/go/pkg/subfinder  /usr/bin/
         print_separator
         if [ $? -eq 0 ]; then
