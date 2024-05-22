@@ -240,6 +240,7 @@ install_chaos (){
         sudo apt-get update
 	    sudo apt install -y golang
         go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
+        
         print_separator
 
         if [ $? -eq 0 ]; then
