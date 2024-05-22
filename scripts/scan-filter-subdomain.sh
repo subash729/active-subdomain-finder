@@ -121,9 +121,10 @@ filtering_duplicate_and_inactive(){
         unique_subdomain_file=${unique_subdomain_array_files[$index]}
         active_subdomain_file=${active_subdomain_array_files[$index]}
 
-        httpx_argument="httpx-toolkit -probe -sc -retries 3 -cname  -ip -method  -title -location -td"
+        rm resume.cfg
+        httpx_argument="httpx-toolkit -probe -sc -cname  -ip -method  -title -location -td"
         cat $unique_subdomain_file | httpx-toolkit >> $active_subdomain_file
-        cat $unique_subdomain_file | $httpx_argument 
+        cat $unique_subdomain_file | $httpx_argument -o "complete_info_$active_subdomain_file"
         # Add logic to filter active subdomains and write to $active_subdomain_file
         index=$((index + 1))
     done
@@ -144,7 +145,8 @@ main() {
     filtering_duplicate_and_inactive
     deleting_others_scan
 
-    unset scan_store_dir all_subdomain_array_files unique_subdomain_array_files active_subdomain_array_files domains   
+    unset scan_store_dir all_subdomain_array_files unique_subdomain_array_files 
+    unset active_subdomain_array_files domains httpx_argument
 }
 
 main
