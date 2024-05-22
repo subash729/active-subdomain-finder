@@ -35,6 +35,6 @@ jobs:
           ls -al 
       - name: scanning and Filtering content
         working-directory: scripts 
-        run :
+        run : |
           chmod +x scan-filter-subdomain.sh
           ./scan-filter-subdomain.sh
