@@ -205,11 +205,12 @@ install_subfinder(){
     elif grep -q 'Ubuntu' /etc/os-release; then
         sudo apt-get update
         sudo apt install -y golang
+        sudo apt install -y tree
         go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
         echo "------------- home directory --------------"
         ls $HOME
         echo "------------ home go directory --------------"
-        ls $HOME/go/pkg
+        tree $HOME/go/pkg
         sudo cp $HOME/go/pkg/subfinder  /usr/bin/
         print_separator
         if [ $? -eq 0 ]; then
