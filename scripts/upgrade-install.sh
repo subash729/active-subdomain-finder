@@ -53,7 +53,7 @@ install_and_upgrade_figlet() {
     print_intermediate "Installing Figlet"
     print_separator
 
-    if grep -q 'Ubuntu' /etc/os-release; then
+    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
         sudo apt-get update
         sudo apt-get install -y figlet
         print_separator
@@ -64,7 +64,7 @@ install_and_upgrade_figlet() {
             print_fail "Failed to install Figlet"  
         fi
 
-    elif grep -qEi 'redhat|centos' /etc/os-release; then
+    elif grep -qEi 'redhat\|centos' /etc/os-release; then
         sudo yum -y install figlet
         print_separator
         if [ $? -eq 0 ]; then
