@@ -157,8 +157,11 @@ install_subfinder(){
             print_fail "subfinder to install Figlet"  
         fi
     
-    else 
-        print_fail "Unsupported Distribution"
+    else
+        print_separator
+        print_fail "Unsupported Linux distribution"  
+        exit 1
+    fi
 
 }
 
