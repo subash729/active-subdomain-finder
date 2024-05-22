@@ -102,6 +102,19 @@ check_chaos_installed() {
         return 1
     fi
 }
+check_httpx-toolkit_installed() {
+    print_separator
+    print_header "4 - httpx-toolkit"
+    print_separator
+    sleep 2
+    if command -v httpx-toolkit &>/dev/null; then
+        print_success "httpx-toolkit is already installed"
+        return 0
+    else
+        print_fail "httpx-toolkit Package is missing"
+        return 1
+    fi
+}
 
 # ---------- Package installation start -------------
 
@@ -259,6 +272,38 @@ install_chaos (){
 
 
 }
+install_httpx-toolkit () {
+    if check_httpx-toolkit_installed; then
+        return
+    fi
+
+    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
+    print_init "$os_description Detected on your system"
+    printf "\n"
+    print_intermediate "Installing httpx-toolkit"
+    print_separator
+
+    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
+        sudo apt-get update
+        sudo apt install -y httpx-toolkit
+
+        
+        print_separator
+
+        if [ $? -eq 0 ]; then
+            print_success "httpx-toolkit is now installed"
+        else
+            print_fail "httpx-toolkit to install Figlet"
+        fi
+
+    else
+        print_separator
+        print_fail "Unsupported Linux distribution"
+        exit 1
+    fi
+
+
+}
 
 main() {
     #first package installation
@@ -266,5 +311,8 @@ main() {
     install_subfinder
     install_amass
     install_chaos
+
+    # tool to find active or up webserver
+    install_httpx-toolkit 
 }
 main

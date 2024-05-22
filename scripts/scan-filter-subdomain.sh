@@ -88,6 +88,7 @@ scanning_subdomain() {
         print_intermediate "Scanning $domain in progress..."
         subdomain_single_file=${all_subdomain_array_files[$index]}
         subfinder -d $domain >> "$subdomain_single_file"
+        chaos -up 
         chaos -d tesla.com -v >> "$subdomain_single_file"
         print_separator
         index=$((index + 1))
@@ -119,6 +120,10 @@ filtering_duplicate_and_inactive(){
         print_intermediate "Processing $domain sub-domains in progress..."
         unique_subdomain_file=${unique_subdomain_array_files[$index]}
         active_subdomain_file=${active_subdomain_array_files[$index]}
+
+        httpx_argument=httpx-toolkit -probe -sc -retries 3 -cname  -ip -method  -title -location -td
+        cat $unique_subdomain_file >> $active_subdomain_file
+        cat $unique_subdomain_file | $httpx_argument 
         # Add logic to filter active subdomains and write to $active_subdomain_file
         index=$((index + 1))
     done
