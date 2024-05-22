@@ -1,0 +1,24 @@
+name: finding active sub-domain
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  install_dependencies:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Create log directory
+        run: mkdir -p ~/Github-action/3-Tier/pipeline-log/tmp-log/tmp-log
+      
+      - name: Install dependencies
+        working-directory: scripts 
+        run: |
+            chmod +x dependency-install.sh
+            ./dependency-install.sh
