@@ -74,6 +74,7 @@ prerequisite_setup() {
         touch $subdomain_single_file
         touch $unique_subdomain_file
         touch $active_subdomain_file
+        touch $final_subdomain_file
 
         # Array used to store filenames
         all_subdomain_array_files+=("$subdomain_single_file")
@@ -139,7 +140,7 @@ active_domain_find() {
         site_count=$(wc -l < $active_subdomain_file)
 
         # Conditional execution based on word count
-        if [ "$site_count" -gt 300 ]; then
+        if [ "$site_count" -lt 300 ]; then
             print_init "Only $site_count sub-domains are active, Displaying detailed info in console"
             httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
             cat $unique_subdomain_file | $httpx_argument
