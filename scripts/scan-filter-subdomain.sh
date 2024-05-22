@@ -88,11 +88,11 @@ scanning_subdomain() {
         subdomain_single_file=${all_subdomain_array_files[$index]}
         subfinder -d $domain >> "$subdomain_single_file"
         print_separator
-        echo -e "\n\n"
         index=$((index + 1))
     done
     print_success "All Domain are are scanned Sucessfully !!! "
     print_separator
+    echo -e "\n\n"
 }
 
 filtering_duplicate_and_inactive(){
@@ -109,7 +109,7 @@ filtering_duplicate_and_inactive(){
         index=$((index + 1))
     done
     print_separator
-    echo -e "\n\n"
+   
 
     print_separator
     print_init "STEP -2 : Finding active subdomains in progress..."
@@ -121,9 +121,10 @@ filtering_duplicate_and_inactive(){
         # Add logic to filter active subdomains and write to $active_subdomain_file
         index=$((index + 1))
     done
-    echo -e "\n\n"
+    
     print_success "Unique Domain are extracted Sucessfully !!! "
     print_separator
+    echo -e "\n\n"
 }
 
 deleting_others_scan() {

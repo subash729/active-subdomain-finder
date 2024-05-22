@@ -30,6 +30,7 @@ jobs:
         working-directory: "source code/amass" 
         run: |
           cp -r * $HOME/.config/amass/
+          ls -al
 
   scanning_subdomain:
     runs-on: self-hosted
