@@ -72,7 +72,7 @@ install_figlet() {
     print_intermediate "Installing Figlet"
     print_separator
 
-    if grep -q 'Ubuntu' /etc/os-release; then
+    if grep -q 'Ubuntu|kali' /etc/os-release; then
         sudo apt-get update
         sudo apt-get install -y figlet
         print_separator
