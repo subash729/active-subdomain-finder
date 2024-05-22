@@ -206,8 +206,10 @@ install_subfinder(){
         sudo apt-get update
         sudo apt install -y golang
         go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+        echo "home directory"
         ls $HOME
-        ls $HOME/go/bin/
+        echo "home go directory"
+        ls $HOME/go/
         sudo cp $HOME/go/bin/subfinder  /usr/bin/
         print_separator
         if [ $? -eq 0 ]; then
