@@ -190,11 +190,23 @@ install_subfinder(){
     print_intermediate "Installing subfinder"
     print_separator
 
-    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
+    if grep -q 'Kali' /etc/os-release; then
         sudo apt-get update
         sudo apt-get install -y subfinder
         print_separator
 
+        if [ $? -eq 0 ]; then
+            print_success "subfinder is now installed"
+        else
+            print_fail "subfinder to install Figlet"
+        fi
+
+    
+    elif grep -q 'Ubuntu' /etc/os-release; then
+        sudo apt-get update
+        sudo apt install -y golang
+        go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+        print_separator
         if [ $? -eq 0 ]; then
             print_success "subfinder is now installed"
         else
