@@ -66,10 +66,10 @@ prerequisite_setup() {
     fi
 
     for domain in $domains; do
-        subdomain_single_file=$scan_store_dir/${domain}__initial_subdomain__$(date +%Y-%m-%d__%H:%M).txt
-        unique_subdomain_file=$scan_store_dir/${domain}__unique_subdomain__$(date +%Y-%m-%d__%H:%M).txt
-        active_subdomain_file=$scan_store_dir/${domain}__active_subdomain__$(date +%Y-%m-%d__%H:%M).txt
-        final_subdomain_file=$scan_store_dir/${domain}__scan_info__$(date +%Y-%m-%d__%H:%M).txt
+        subdomain_single_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__initial_subdomain.txt
+        unique_subdomain_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__unique_subdomain.txt
+        active_subdomain_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__active_subdomain.txt
+        final_subdomain_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__scan_info.txt
 
         touch $subdomain_single_file
         touch $unique_subdomain_file
@@ -129,7 +129,7 @@ active_domain_find() {
     print_init "STEP -2 : Finding active subdomains in progress..."
     index=0
     for domain in $domains; do
-        print_intermediate "Processing $domain sub-domains in progress..."
+        print_intermediate "Processing #### $domain #### sub-domains in progress..."
         unique_subdomain_file=${unique_subdomain_array_files[$index]}
         active_subdomain_file=${active_subdomain_array_files[$index]}
         final_subdomain_file=${complete_subdomain_info_array_files[$index]}
@@ -141,18 +141,23 @@ active_domain_find() {
 
         # Conditional execution based on word count
         if [ "$site_count" -lt 300 ]; then
-            print_init "Only $site_count sub-domains are active, Displaying detailed info in console"
+            print_separator
+            print_init "Only ### $site_count ### sub-domains are active, Displaying detailed info in console"
+            print_separator
             httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
             cat $unique_subdomain_file | $httpx_argument
 
         else
-            print_init "Huge no i.e. $site_count sub-domains are active, Running silently "
-            httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td"
+            print_separator
+            print_init "Huge no i.e. ### $site_count ### sub-domains are active, Running silently "
+            print_separator
+            httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats"
             cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file
             
         fi
 
         # Add logic to filter active subdomains and write to $active_subdomain_file
+        site_count=0
         index=$((index + 1))
     done
     print_separator
