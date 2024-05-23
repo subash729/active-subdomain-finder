@@ -36,12 +36,14 @@ function print_intermediate {
 function print_success {
     local message="$1"
     printf "\e[1m\e[32m%s\e[0m\n" "$message"
+    
 }
 
 # Failures in Red color
 function print_fail {
     local message="$1"
     printf "\e[1m\e[31m%s\e[0m\n" "$message"
+    
 }
 
 # -------------Displaying Screen message in color end ----------------
@@ -87,7 +89,7 @@ taking_input() {
                 shift # past value
                 ;;
             -o|--output)
-                output="$2"
+                OUTPUT="$2"
                 shift # past argument
                 shift # past value
                 ;;
@@ -98,10 +100,31 @@ taking_input() {
         esac
     done
 
-    # Check if username, password, source, and destination are provided
-    if [[ -z $SITE || -z $FILE || -z $OUTPUT ]]; then
-        echo "Error: domain-name or file container domain-name is required."
+    # Check if at least one of site, file, or output is provided
+    if [[ -z $SITE && -z $FILE ]]; then
+        echo "Error: Please enter  -s website-name or -f file of website"
         usage
+    fi
+
+    # -n checks non empty, concatenating both -s and -f domain name
+    if [[ -n $SITE && -n $FILE ]]; then
+    # Read from -s input and exclude script's own name
+        if [[ -f $FILE ]]; then
+            domains="$SITE $(grep -v "$0" "$FILE")"
+        else
+            domains="$SITE"
+        fi
+    elif [[ -n $SITE ]]; then
+        # Read from -s input
+        domains="$SITE"
+    elif [[ -n $FILE ]]; then
+        # Read from -f input if the file exists
+        if [[ -f $FILE ]]; then
+            domains=$(grep -v "$0" "$FILE")
+        else
+            echo "Error: File $FILE does not exist."
+            exit 1
+        fi
     fi
 }
 
@@ -109,13 +132,6 @@ prerequisite_setup() {
     print_init "Creating Scan output Base directory and files at $scan_store_dir"
     print_separator
     mkdir -p $scan_store_dir
-
-    if [[ -f ../domain-list.txt ]]; then
-        domains=$(cat ../domain-list.txt)
-    else
-        echo "domain-list.txt not found!"
-        exit 1
-    fi
 
     for domain in $domains; do
         subdomain_single_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__initial_subdomain.txt
@@ -126,13 +142,10 @@ prerequisite_setup() {
         touch $subdomain_single_file
         touch $unique_subdomain_file
 
-
-        # Array used to store filenames
         all_subdomain_array_files+=("$subdomain_single_file")
         unique_subdomain_array_files+=("$unique_subdomain_file")
         active_subdomain_array_files+=("$active_subdomain_file")
         complete_subdomain_info_array_files+=("$final_subdomain_file")
-
     done
 }
 
@@ -170,13 +183,14 @@ filtering_duplicate_sub_domain() {
         unique_subdomain_file=${unique_subdomain_array_files[$index]}
 
         print_intermediate "Processing $domain sub-domains in progress..."
-        print_intermediate "scanning subdomain using file : $subdomain_single_file"
-
-        # Redirecting unique output to respective subdomain-file
+        print_intermediate "Scanning subdomains using file: $subdomain_single_file"
+        
         sort "$subdomain_single_file" | uniq >> "$unique_subdomain_file"
+        sort "$subdomain_single_file" | uniq >> $OUTPUT
         index=$((index + 1))
     done
-    print_success "Unique Domain are extracted Sucessfully !!! "
+    print_success "Unique Domains are extracted successfully!"
+    print_separator
 }
 
 active_domain_find() {
@@ -232,11 +246,11 @@ active_domain_find() {
     print_success "ACTIVE Domain are filtered Sucessfully !!! "
 }
 
+
 deleting_others_scan() {
     print_separator
     print_init "STEP -3 : Deleting other subdomains files in progress..."
-    rm -rf $scan_store_dir/*initial*.txt
-    # rm -rf $scan_store_dir/*unique*.txt
+    rm -rf $scan_store_dir/*initial*.txt 
 }
 
 main() {
@@ -247,8 +261,8 @@ main() {
     active_domain_find
     deleting_others_scan
 
-    unset scan_store_dir all_subdomain_array_files unique_subdomain_array_files
-    unset active_subdomain_array_files domains httpx_argument
+    unset scan_store_dir all_subdomain_array_files unique_subdomain_array_files 
+    unset active_subdomain_array_files domains
 }
 
 main "$@"
