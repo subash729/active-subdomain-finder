@@ -68,8 +68,7 @@ prerequisite_setup() {
 
         touch $subdomain_single_file
         touch $unique_subdomain_file
-        touch $active_subdomain_file
-        touch $final_subdomain_file
+
 
         # Array used to store filenames
         all_subdomain_array_files+=("$subdomain_single_file")
@@ -94,7 +93,7 @@ scanning_subdomain() {
         subdomain_single_file=${all_subdomain_array_files[$index]}
         subfinder -d $domain >> "$subdomain_single_file"
         chaos -up 
-        chaos -d tesla.com -v >> "$subdomain_single_file"
+        chaos -d $domain -v >> "$subdomain_single_file"
         # ffuf -u http://FUZZ.$domain -w "../source code/ffuf/n0kovo_subdomains_large.txt"
         print_separator
         index=$((index + 1))
@@ -110,9 +109,11 @@ filtering_duplicate_sub_domain() {
     print_init "STEP -1 : Filtering duplicate sub-domains in progress..."
     index=0
     for domain in $domains; do
-        print_intermediate "Processing $domain sub-domains in progress..."
         subdomain_single_file=${all_subdomain_array_files[$index]}
         unique_subdomain_file=${unique_subdomain_array_files[$index]}
+
+        print_intermediate "Processing $domain sub-domains in progress..."
+        print_intermediate "scanning subdomain using file : $subdomain_single_file"
         
         # Redirecting unique output to respective subdomain-file
         sort "$subdomain_single_file" | uniq >> "$unique_subdomain_file"
@@ -126,6 +127,7 @@ active_domain_find() {
     index=0
     for domain in $domains; do
         print_intermediate "Processing sub-domains of #---- https://$domain ---#  in progress..."
+        print_intermediate "scanning subdomain using file : $unique_subdomain_file"
         unique_subdomain_file=${unique_subdomain_array_files[$index]}
         active_subdomain_file=${active_subdomain_array_files[$index]}
         final_subdomain_file=${complete_subdomain_info_array_files[$index]}

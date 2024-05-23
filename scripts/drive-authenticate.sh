@@ -33,11 +33,6 @@ taking_input() {
                 shift # past argument
                 shift # past value
                 ;;
-            -t|--token)
-                TOKEN="$2"
-                shift # past argument
-                shift # past value
-                ;;
             *)
                 # unknown option
                 usage
@@ -46,8 +41,8 @@ taking_input() {
     done
 
     # Check if username, password, token, client_id, and client_secret are provided
-    if [[ -z $USERNAME || -z $PASSWORD_ONLY || -z $TOKEN ]]; then
-        echo "Error: Google Drive username, password, token are required."
+    if [[ -z $USERNAME || -z $PASSWORD_ONLY ]]; then
+        echo "Error: Google Drive username, password required."
         usage
     fi
 }

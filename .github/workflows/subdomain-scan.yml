@@ -64,8 +64,8 @@ jobs:
       - name: Authenticate google-drive
         working-directory: scripts 
         run: |
-          chmod +x copy-to-drive.sh
-          ./copy-to-drive.sh -u ${{ secrets.DRIVE_USERNAME }} -p  ${{ secrets.DRIVE_PASSWORD }}
+          chmod +x drive-authenticate.sh
+          ./drive-authenticate.sh -u ${{ secrets.DRIVE_USERNAME }} -p  ${{ secrets.DRIVE_PASSWORD }}
       
       - name: copying to googledrive
         run: |
