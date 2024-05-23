@@ -142,7 +142,19 @@ check_rclone_installed() {
         return 1
     fi
 }
-
+check_mega-cmd_installed() {
+    print_separator
+    print_header "7 - rclone"
+    print_separator
+    sleep 2
+    if command -v mega-cmd &>/dev/null; then
+        print_success "mega-cmd is already installed"
+        return 0
+    else
+        print_fail "mega-cmd Package is missing"
+        return 1
+    fi
+}
 
 # ---------- Package installation start -------------
 
@@ -212,7 +224,7 @@ install_subfinder(){
         if [ $? -eq 0 ]; then
             print_success "subfinder is now installed"
         else
-            print_fail "subfinder to install Figlet"
+            print_fail "Failed to install subfinder"
         fi
 
     
@@ -226,7 +238,7 @@ install_subfinder(){
         if [ $? -eq 0 ]; then
             print_success "subfinder is now installed"
         else
-            print_fail "subfinder to install Figlet"
+            print_fail "Failed to install subfinder"
         fi
 
     elif grep -qEi 'redhat\|centos' /etc/os-release; then
@@ -239,7 +251,7 @@ install_subfinder(){
         if [ $? -eq 0 ]; then
             print_success "subfinder is now installed"
         else
-            print_fail "subfinder to install Figlet"
+            print_fail "Failed to install subfinder"
         fi
 
     else
@@ -269,7 +281,7 @@ install_amass() {
         if [ $? -eq 0 ]; then
             print_success "amass is now installed"
         else
-            print_fail "amass to install Figlet"
+            print_fail "Failed to install amass"
         fi
 
     else
@@ -301,7 +313,7 @@ install_chaos (){
         if [ $? -eq 0 ]; then
             print_success "chaos is now installed"
         else
-            print_fail "chaos to install Figlet"
+            print_fail "chaos is not installed"
         fi
     else
         print_separator
@@ -330,7 +342,7 @@ install_ffuf () {
         if [ $? -eq 0 ]; then
             print_success "ffuf is now installed"
         else
-            print_fail "ffuf to install Figlet"
+            print_fail "ffuf is not installed"
         fi
 
     else
@@ -359,7 +371,7 @@ install_httpx-toolkit () {
         if [ $? -eq 0 ]; then
             print_success "httpx-toolkit is now installed"
         else
-            print_fail "httpx-toolkit to install Figlet"
+            print_fail "httpx-toolkit is not installed"
         fi
     
     elif grep -q 'Ubuntu' /etc/os-release; then
@@ -400,7 +412,7 @@ install_rclone () {
         if [ $? -eq 0 ]; then
             print_success "rclone is now installed"
         else
-            print_fail "rclone to install Figlet"
+            print_fail "rclone is not installed"
         fi
 
     else
@@ -408,6 +420,34 @@ install_rclone () {
         print_fail "Unsupported Linux distribution"
         exit 1
     fi
+}
+
+install_mega-cmd{
+    if check_mega-cmd_installed; then
+        return
+    fi
+
+    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
+    print_init "$os_description Detected on your system"
+    printf "\n"
+    print_intermediate "Installing mega-cmd"
+    print_separator
+
+    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
+	    wget https://mega.nz/linux/repo/xUbuntu_22.04/amd64/megacmd-xUbuntu_22.04_amd64.deb \
+		    && sudo apt install -y "$PWD/megacmd-xUbuntu_22.04_amd64.deb"
+    if [ $? -eq 0 ]; then
+            print_success "mega-cmd is now installed"
+        else
+            print_fail "mega-cmd is not installed"
+        fi
+
+    else
+        print_separator
+        print_fail "Unsupported Linux distribution"
+        exit 1
+    fi
+
 }
 
 main() {

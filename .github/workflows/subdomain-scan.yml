@@ -54,23 +54,16 @@ jobs:
           chmod +x scan-filter-subdomain.sh
           ./scan-filter-subdomain.sh
 
-  copy-to-drive:
+  copy-to-mega:
     runs-on: self-hosted
     needs: scanning_subdomain
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Authenticate google-drive
-        working-directory: scripts 
+      - name: Authenticating mega and copying file
+        working-directory: scripts
         run: |
-          chmod +x drive-authenticate.sh
-          ./drive-authenticate.sh -u ${{ secrets.DRIVE_USERNAME }} -p  ${{ secrets.DRIVE_PASSWORD }}
-      
-      - name: copying to googledrive
-        run: |
-          cd ~/information-gathering/
-          find . -name "*.txt" -exec rclone copy {} googledrive:/Website-scan --progress \;
-
-  
-
+          chmod +x mega-config.sh  
+          ./mega-config.sh -u ${{ secrets.MEGA_USERNAME }} -p ${{ secrets.MEGA_PASSWORD }} -s "$HOME/information-gathering/*.txt" -d /Website-scan 
+          
