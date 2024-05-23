@@ -31,7 +31,6 @@ jobs:
         run: |
           mkdir -p $HOME/.config/amass/ 
           cp -r * $HOME/.config/amass/
-          ls -al
 
       - name: chaos API key setup 
         run: |
@@ -52,7 +51,6 @@ jobs:
         run : |
           export PDCP_API_KEY=${{ secrets.CHAOS_API_KEY }}
           chmod +x scan-filter-subdomain.sh
-          ls -al ../
           ./scan-filter-subdomain.sh -f "../domain-list.txt"
 
   copy-to-mega:
