@@ -6,12 +6,7 @@ declare -a unique_subdomain_array_files # removing duplicates and storing unique
 declare -a active_subdomain_array_files # filtering only active domains
 declare -a complete_subdomain_info_array_files
 
-
-
-
-
 # ------- LARGE Banner display section start
-
 function print_separator {
     printf "\n%s\n" "--------------------------------------------------------------------------------"
 }
@@ -150,19 +145,24 @@ active_domain_find() {
             print_separator
             print_init "Only ### $site_count ### sub-domains are active, Displaying detailed info in console"
             print_separator
-            if grep -q 'Ubuntu' /etc/os-release; then
-                httpx_argument="httpx -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
+            if grep -q 'Kali' /etc/os-release; then
+                httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
                 cat $unique_subdomain_file | $httpx_argument
             else
-                httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
+                httpx_argument="httpx -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
                 cat $unique_subdomain_file | $httpx_argument
             fi
         else
             print_separator
             print_init "Huge no i.e. ### $site_count ### sub-domains are active, Running silently "
             print_separator
-            httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats"
-            cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file 
+            if grep -q 'Kali' /etc/os-release; then
+                httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats"
+                cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file 
+            else
+                httpx_argument="httpx -probe -sc -cname -ip -method -title -location -td -stats"
+                cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file 
+            fi
         fi
 
         # Add logic to filter active subdomains and write to $active_subdomain_file
