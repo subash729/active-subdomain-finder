@@ -204,13 +204,9 @@ install_subfinder(){
     
     elif grep -q 'Ubuntu' /etc/os-release; then
         sudo apt-get update
-        sudo apt install -y golang
+        sudo snap install go
         sudo apt install -y tree
         go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-        echo "------------- home directory --------------"
-        ls $HOME
-        echo "------------ home go directory --------------"
-        tree -L 3 $HOME/go/
         sudo cp $HOME/go/bin/subfinder  /usr/bin/
         print_separator
         if [ $? -eq 0 ]; then
@@ -283,7 +279,7 @@ install_chaos (){
 
     if grep -q 'Ubuntu\|Kali' /etc/os-release; then
         sudo apt-get update
-	    sudo apt install -y golang
+	    sudo snap install go --classic
         go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
         sudo cp $HOME/go/bin/chaos  /usr/bin/
         print_separator
