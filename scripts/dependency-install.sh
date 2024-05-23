@@ -462,5 +462,7 @@ main() {
     install_httpx-toolkit 
     # copy files to google-drive
     install_rclone
+    # tools to copy to mega
+    install_mega-cmd
 }
 main
