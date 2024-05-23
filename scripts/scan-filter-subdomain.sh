@@ -1,9 +1,12 @@
 #!/bin/bash
 
 scan_store_dir=$HOME/information-gathering
+declare -a all_subdomain_array_files # for initial all subdomains
+declare -a unique_subdomain_array_files # removing duplicates and storing unique
+declare -a active_subdomain_array_files # filtering only active domains
+declare -a complete_subdomain_info_array_files
 
 # ------- LARGE Banner display section start
-
 function print_separator {
     printf "\n%s\n" "--------------------------------------------------------------------------------"
 }
@@ -13,9 +16,9 @@ function print_header {
     print_separator
 }
 
-# --------------- LArge Banner display Section end --------------
+# --------------- Large Banner display Section end --------------
 
-# Displaying Screen message in color  Start
+# Displaying Screen message in color Start
 
 # Detection in Yellow color
 function print_init {
@@ -33,435 +36,219 @@ function print_intermediate {
 function print_success {
     local message="$1"
     printf "\e[1m\e[32m%s\e[0m\n" "$message"
-    print_separator
 }
 
 # Failures in Red color
 function print_fail {
     local message="$1"
     printf "\e[1m\e[31m%s\e[0m\n" "$message"
-    print_separator
 }
 
-# -------------Displaying Screen message in color  end ----------------
+# -------------Displaying Screen message in color end ----------------
+
+usage() {
+    print_header "Scan and Filter Subdomains"
 
 
-# ---------- Package installed Function check start -------------
-check_figlet_installed() {
-    print_separator
-    print_header "1 - FIGLET"
-    print_separator
-    sleep 2
-    if command -v figlet &>/dev/null; then
-        print_success "Figlet is already installed"
-        return 0
-    else
-        print_fail "Figlet Package is missing"
-        return 1
-    fi
+    echo "Usage: $0 [-s <websitename>] | [-f <source-file>] -o <output file>"
+    echo "Options:"
+    echo "  -s, --site <websitename>        Website Name"
+    echo "  -p, --file <source-file>        File containing website names"
+    echo "  -o, --output <output file>      Output file name to save result"
+    echo
+    print_intermediate "Examples:"
+    print_init "  ./scan-filter-subdomain.sh -s facebook.com"
+    print_init "  ./scan-filter-subdomain.sh --file website-list.txt -o final-outputlist"
+    print_fail "For more information, contact us:"
+    print_success "  Email: pingjiwan@gmail.com,  Phone: +977 9866358671"
+    print_success "  Email: subaschy729@gmail.com, Phone: +977 9823827047"
+    exit 1
 }
 
-check_subfinder_installed() {
-    print_separator
-    print_header "2 - SUBFINDER"
-    print_separator
-    sleep 2
-    if command -v subfinder &>/dev/null; then
-        print_success "subfinder is already installed"
-        return 0
-    else
-        print_fail "subfinder Package is missing"
-        return 1
-    fi
-}
+# Function to take input from user
+taking_input() {
+    # Initialize variables with default values
+    SITE=""
+    FILE=""
+    OUTPUT=""
 
-check_amass_installed() {
-    print_separator
-    print_header "3 - AMASS"
-    print_separator
-    sleep 2
-    if command -v amass &>/dev/null; then
-        print_success "amass is already installed"
-        return 0
-    else
-        print_fail "amass Package is missing"
-        return 1
-    fi
-}
+    # Parse command-line options
+    while [[ $# -gt 0 ]]; do
+        key="$1"
+        case $key in
+            -s|--site)
+                SITE="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            -f|--file)
+                FILE="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            -o|--output)
+                output="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            *)
+                # unknown option
+                usage
+                ;;
+        esac
+    done
 
-check_chaos_installed() {
-    print_separator
-    print_header "4 - CHAOS"
-    print_separator
-    sleep 2
-    if command -v chaos &>/dev/null; then
-        print_success "chaos is already installed"
-        return 0
-    else
-        print_fail "chaos Package is missing"
-        return 1
-    fi
-}
-check_ffuf_installed() {
-    print_separator
-    print_header "5 - ffuf"
-    print_separator
-    sleep 2
-    if command -v ffuf &>/dev/null; then
-        print_success "ffuf is already installed"
-        return 0
-    else
-        print_fail "ffuf Package is missing"
-        return 1
+    # Check if username, password, source, and destination are provided
+    if [[ -z $SITE || -z $FILE || -z $OUTPUT ]]; then
+        echo "Error: domain-name or file container domain-name is required."
+        usage
     fi
 }
 
-check_httpx-toolkit_installed() {
+prerequisite_setup() {
+    print_init "Creating Scan output Base directory and files at $scan_store_dir"
     print_separator
-    print_header "6 - httpx-toolkit"
-    print_separator
-    sleep 2
-    if command -v httpx-toolkit &>/dev/null; then
-        print_success "httpx-toolkit is already installed"
-        return 0
+    mkdir -p $scan_store_dir
+
+    if [[ -f ../domain-list.txt ]]; then
+        domains=$(cat ../domain-list.txt)
     else
-        print_fail "httpx-toolkit Package is missing"
-        return 1
-    fi
-}
-check_rclone_installed() {
-    print_separator
-    print_header "7 - rclone"
-    print_separator
-    sleep 2
-    if command -v rclone &>/dev/null; then
-        print_success "rclone is already installed"
-        return 0
-    else
-        print_fail "rclone Package is missing"
-        return 1
-    fi
-}
-check_mega-cmd_installed() {
-    print_separator
-    print_header "7 - rclone"
-    print_separator
-    sleep 2
-    if command -v mega-cmd &>/dev/null; then
-        print_success "mega-cmd is already installed"
-        return 0
-    else
-        print_fail "mega-cmd Package is missing"
-        return 1
-    fi
-}
-
-# ---------- Package installation start -------------
-
-install_figlet() {
-    if check_figlet_installed; then
-        return
-    fi
-
-    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
-    print_init "$os_description Detected on your system"
-    printf "\n"
-    print_intermediate "Installing Figlet"
-    print_separator
-
-    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
-        sudo apt-get update
-        sudo apt-get install -y figlet
-        print_separator
-
-        if [ $? -eq 0 ]; then
-            print_success "Figlet is now installed"
-        else
-            print_fail "Failed to install Figlet"
-        fi
-
-    elif grep -qEi 'redhat\|centos' /etc/os-release; then
-        sudo yum -y install figlet
-        print_separator
-        if [ $? -eq 0 ]; then
-            print_success "Figlet is now installed"
-        else
-            print_fail "Failed to install Figlet"
-        fi
-
-    elif grep -q 'Amazon Linux 2' /etc/os-release || grep -q 'Amazon Linux 3' /etc/os-release; then
-        sudo amazon-linux-extras install epel -y
-        sudo yum -y install figlet
-        print_separator
-        if [ $? -eq 0 ]; then
-            print_success "Figlet is now installed"
-        else
-            print_fail "Failed to install Figlet"
-        fi
-    else
-        print_separator
-        print_fail "Unsupported Linux distribution"
-        exit 1
-    fi
-}
-
-install_subfinder(){
-    if check_subfinder_installed; then
-        return
-    fi
-
-    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
-    print_init "$os_description Detected on your system"
-    printf "\n"
-    print_intermediate "Installing subfinder"
-    print_separator
-
-    if grep -q 'Kali' /etc/os-release; then
-        sudo apt-get update
-        sudo apt-get install -y subfinder
-        print_separator
-
-        if [ $? -eq 0 ]; then
-            print_success "subfinder is now installed"
-        else
-            print_fail "Failed to install subfinder"
-        fi
-
-
-    elif grep -q 'Ubuntu' /etc/os-release; then
-        sudo apt-get update
-        sudo snap install go
-        sudo apt install -y tree
-        go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-        sudo cp $HOME/go/bin/subfinder  /usr/bin/
-        print_separator
-        if [ $? -eq 0 ]; then
-            print_success "subfinder is now installed"
-        else
-            print_fail "Failed to install subfinder"
-        fi
-
-    elif grep -qEi 'redhat\|centos' /etc/os-release; then
-        sudo yum -y install subfinder
-        sudo dnf -y update
-        sudo dnf -y install epel-release
-        sudo dnf -y update
-        sudo dnf -y install subfinder
-        print_separator
-        if [ $? -eq 0 ]; then
-            print_success "subfinder is now installed"
-        else
-            print_fail "Failed to install subfinder"
-        fi
-
-    else
-        print_separator
-        print_fail "Unsupported Linux distribution"
+        echo "domain-list.txt not found!"
         exit 1
     fi
 
+    for domain in $domains; do
+        subdomain_single_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__initial_subdomain.txt
+        unique_subdomain_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__unique_subdomain.txt
+        active_subdomain_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__active_subdomain.txt
+        final_subdomain_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__scan_info.txt
+
+        touch $subdomain_single_file
+        touch $unique_subdomain_file
+
+
+        # Array used to store filenames
+        all_subdomain_array_files+=("$subdomain_single_file")
+        unique_subdomain_array_files+=("$unique_subdomain_file")
+        active_subdomain_array_files+=("$active_subdomain_file")
+        complete_subdomain_info_array_files+=("$final_subdomain_file")
+
+    done
 }
 
-install_amass() {
-    if check_amass_installed; then
-        return
-    fi
-
-    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
-    print_init "$os_description Detected on your system"
-    printf "\n"
-    print_intermediate "Installing amass"
+scanning_subdomain() {
+    print_header "1 - SCAN"
+    print_separator
+    echo "Domains to be scanned:"
+    print_init "$domains"
     print_separator
 
-    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
-        sudo apt-get update
-        sudo apt-get install -y amass
+    index=0
+    for domain in $domains; do
         print_separator
-
-        if [ $? -eq 0 ]; then
-            print_success "amass is now installed"
-        else
-            print_fail "Failed to install amass"
-        fi
-
-    else
+        print_intermediate "Scanning $domain in progress..."
+        subdomain_single_file=${all_subdomain_array_files[$index]}
+        subfinder -d $domain >> "$subdomain_single_file"
+        chaos -up
+        chaos -d $domain -v >> "$subdomain_single_file"
+        # ffuf -u http://FUZZ.$domain -w "../source code/ffuf/n0kovo_subdomains_large.txt"
         print_separator
-        print_fail "Unsupported Linux distribution"
-        exit 1
-    fi
-
+        index=$((index + 1))
+    done
+    print_success "All Domain are are scanned Sucessfully !!! "
+    print_separator
+    echo -e "\n\n"
 }
 
-install_chaos (){
-    if check_chaos_installed; then
-        return
-    fi
-
-    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
-    print_init "$os_description Detected on your system"
-    printf "\n"
-    print_intermediate "Installing chaos"
+filtering_duplicate_sub_domain() {
+    print_header "2 - DATA CLEAN"
     print_separator
+    print_init "STEP -1 : Filtering duplicate sub-domains in progress..."
+    index=0
+    for domain in $domains; do
+        subdomain_single_file=${all_subdomain_array_files[$index]}
+        unique_subdomain_file=${unique_subdomain_array_files[$index]}
 
-    if grep -q 'Kali\|Ubuntu' /etc/os-release; then
-        sudo apt-get update
-            sudo snap install go --classic
-        go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
-        sudo cp $HOME/go/bin/chaos  /usr/bin/
-        print_separator
+        print_intermediate "Processing $domain sub-domains in progress..."
+        print_intermediate "scanning subdomain using file : $subdomain_single_file"
 
-        if [ $? -eq 0 ]; then
-            print_success "chaos is now installed"
-        else
-            print_fail "chaos is not installed"
-        fi
-    else
-        print_separator
-        print_fail "Unsupported Linux distribution"
-        exit 1
-    fi
-
-
-}
-install_ffuf () {
-    if check_ffuf_installed; then
-        return
-    fi
-
-    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
-    print_init "$os_description Detected on your system"
-    printf "\n"
-    print_intermediate "Installing ffuf"
-    print_separator
-
-    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
-        sudo apt-get update
-        sudo apt install -y ffuf
-        print_separator
-
-        if [ $? -eq 0 ]; then
-            print_success "ffuf is now installed"
-        else
-            print_fail "ffuf is not installed"
-        fi
-
-    else
-        print_separator
-        print_fail "Unsupported Linux distribution"
-        exit 1
-    fi
+        # Redirecting unique output to respective subdomain-file
+        sort "$subdomain_single_file" | uniq >> "$unique_subdomain_file"
+        index=$((index + 1))
+    done
+    print_success "Unique Domain are extracted Sucessfully !!! "
 }
 
-install_httpx-toolkit () {
-    if check_httpx-toolkit_installed; then
-        return
-    fi
+active_domain_find() {
+    print_init "STEP -2 : Finding active subdomains in progress..."
+    index=0
+    for domain in $domains; do
+        print_intermediate "Processing sub-domains of #---- https://$domain ---#  in progress..."
+        print_intermediate "scanning subdomain using file : $unique_subdomain_file"
+        unique_subdomain_file=${unique_subdomain_array_files[$index]}
+        active_subdomain_file=${active_subdomain_array_files[$index]}
+        final_subdomain_file=${complete_subdomain_info_array_files[$index]}
 
-    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
-    print_init "$os_description Detected on your system"
-    printf "\n"
-    print_intermediate "Installing httpx-toolkit"
+
+        if grep -q 'Ubuntu' /etc/os-release; then
+            cat $unique_subdomain_file | httpx >> $active_subdomain_file
+        # Initial processing and counting
+        else
+            cat $unique_subdomain_file | httpx-toolkit >> $active_subdomain_file
+        fi
+
+        site_count=$(wc -l < $active_subdomain_file)
+
+        # Conditional execution based on word count
+        if [ "$site_count" -lt 300 ]; then
+            print_separator
+            print_init "Only ### $site_count ### sub-domains are active, Displaying detailed info in console"
+            print_separator
+            if grep -q 'Kali' /etc/os-release; then
+                httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
+                cat $unique_subdomain_file | $httpx_argument
+            else
+                httpx_argument="httpx -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
+                cat $unique_subdomain_file | $httpx_argument
+            fi
+        else
+            print_separator
+            print_init "Huge no i.e. ### $site_count ### sub-domains are active, Running silently "
+            print_separator
+            if grep -q 'Kali' /etc/os-release; then
+                httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats"
+                cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file
+            else
+                httpx_argument="httpx -probe -sc -cname -ip -method -title -location -td -stats"
+                cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file
+            fi
+        fi
+
+        # Add logic to filter active subdomains and write to $active_subdomain_file
+        site_count=0
+        index=$((index + 1))
+    done
     print_separator
-
-    if grep -q 'Kali' /etc/os-release; then
-        sudo apt-get update
-        sudo apt install -y httpx-toolkit
-        print_separator
-
-        if [ $? -eq 0 ]; then
-            print_success "httpx-toolkit is now installed"
-        else
-            print_fail "httpx-toolkit is not installed"
-        fi
-
-    elif grep -q 'Ubuntu' /etc/os-release; then
-        sudo apt-get update
-        sudo snap install go
-        go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-        sudo cp $HOME/go/bin/httpx  /usr/bin/
-        print_separator
-        if [ $? -eq 0 ]; then
-            print_success "httpx-toolkit is now installed"
-        else
-            print_fail "subfinder is not installed"
-        fi
-    else
-        print_separator
-        print_fail "Unsupported Linux distribution"
-        exit 1
-    fi
-
-
-}
-install_rclone () {
-    if check_rclone_installed; then
-        return
-    fi
-
-    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
-    print_init "$os_description Detected on your system"
-    printf "\n"
-    print_intermediate "Installing rclone"
-    print_separator
-
-    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
-        sudo apt-get update
-        sudo apt install -y rclone
-        print_separator
-
-        if [ $? -eq 0 ]; then
-            print_success "rclone is now installed"
-        else
-            print_fail "rclone is not installed"
-        fi
-
-    else
-        print_separator
-        print_fail "Unsupported Linux distribution"
-        exit 1
-    fi
+    print_success "ACTIVE Domain are filtered Sucessfully !!! "
 }
 
-install_mega-cmd() {
-    if check_mega-cmd_installed; then
-        return
-    fi
-
-    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
-    print_init "$os_description Detected on your system"
-    printf "\n"
-    print_intermediate "Installing mega-cmd"
+deleting_others_scan() {
     print_separator
-
-    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
-            wget https://mega.nz/linux/repo/xUbuntu_22.04/amd64/megacmd-xUbuntu_22.04_amd64.deb \
-                    && sudo apt install -y "$PWD/megacmd-xUbuntu_22.04_amd64.deb"
-    if [ $? -eq 0 ]; then
-            print_success "mega-cmd is now installed"
-        else
-            print_fail "mega-cmd is not installed"
-        fi
-
-    else
-        print_separator
-        print_fail "Unsupported Linux distribution"
-        exit 1
-    fi
-
+    print_init "STEP -3 : Deleting other subdomains files in progress..."
+    rm -rf $scan_store_dir/*initial*.txt
+    # rm -rf $scan_store_dir/*unique*.txt
 }
 
 main() {
-    #first package installation
-    install_figlet
-    install_subfinder
-    install_amass
-    install_chaos
-    install_ffuf
+    taking_input "$@"
+    prerequisite_setup
+    scanning_subdomain
+    filtering_duplicate_sub_domain
+    active_domain_find
+    deleting_others_scan
 
-
-    # tool to find active or up webserver
-    install_httpx-toolkit
-    # copy files to google-drive
-    install_rclone
+    unset scan_store_dir all_subdomain_array_files unique_subdomain_array_files
+    unset active_subdomain_array_files domains httpx_argument
 }
-main
+
+main "$@"

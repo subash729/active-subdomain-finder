@@ -36,22 +36,23 @@ function print_intermediate {
 function print_success {
     local message="$1"
     printf "\e[1m\e[32m%s\e[0m\n" "$message"
-    print_separator
+    
 }
 
 # Failures in Red color
 function print_fail {
     local message="$1"
     printf "\e[1m\e[31m%s\e[0m\n" "$message"
-    print_separator
+    
 }
 
 # -------------Displaying Screen message in color end ----------------
 
 usage() {
-    print_header "Mega Setup"
+    print_header "Scan and Filter Subdomains"
 
-    echo "Usage: $0 [-u <username>] [-p <password>] [-s <source_directory/file>] [-d <destination>]"
+
+    echo "Usage: $0 [-s <websitename>] | [-f <source-file>] -o <output file>"
     echo "Options:"
     echo "  -s, --site <websitename>        Website Name"
     echo "  -p, --file <source-file>        File containing website names"
@@ -88,7 +89,7 @@ taking_input() {
                 shift # past value
                 ;;
             -o|--output)
-                output="$2"
+                OUTPUT="$2"
                 shift # past argument
                 shift # past value
                 ;;
@@ -99,10 +100,31 @@ taking_input() {
         esac
     done
 
-    # Check if username, password, source, and destination are provided
-    if [[ -z $SITE || -z $FILE || -z $OUTPUT ]]; then
-        echo "Error: domain-name or file container domain-name is required."
+    # Check if at least one of site, file, or output is provided
+    if [[ -z $SITE && -z $FILE ]]; then
+        echo "Error: Please enter  -s website-name or -f file of website"
         usage
+    fi
+
+    # -n checks non empty, concatenating both -s and -f domain name
+    if [[ -n $SITE && -n $FILE ]]; then
+    # Read from -s input and exclude script's own name
+        if [[ -f $FILE ]]; then
+            domains="$SITE $(grep -v "$0" "$FILE")"
+        else
+            domains="$SITE"
+        fi
+    elif [[ -n $SITE ]]; then
+        # Read from -s input
+        domains="$SITE"
+    elif [[ -n $FILE ]]; then
+        # Read from -f input if the file exists
+        if [[ -f $FILE ]]; then
+            domains=$(grep -v "$0" "$FILE")
+        else
+            echo "Error: File $FILE does not exist."
+            exit 1
+        fi
     fi
 }
 
@@ -110,13 +132,6 @@ prerequisite_setup() {
     print_init "Creating Scan output Base directory and files at $scan_store_dir"
     print_separator
     mkdir -p $scan_store_dir
-
-    if [[ -f ../domain-list.txt ]]; then
-        domains=$(cat ../domain-list.txt)
-    else
-        echo "domain-list.txt not found!"
-        exit 1
-    fi
 
     for domain in $domains; do
         subdomain_single_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__initial_subdomain.txt
@@ -127,13 +142,10 @@ prerequisite_setup() {
         touch $subdomain_single_file
         touch $unique_subdomain_file
 
-
-        # Array used to store filenames
         all_subdomain_array_files+=("$subdomain_single_file")
         unique_subdomain_array_files+=("$unique_subdomain_file")
         active_subdomain_array_files+=("$active_subdomain_file")
         complete_subdomain_info_array_files+=("$final_subdomain_file")
-        
     done
 }
 
@@ -150,7 +162,7 @@ scanning_subdomain() {
         print_intermediate "Scanning $domain in progress..."
         subdomain_single_file=${all_subdomain_array_files[$index]}
         subfinder -d $domain >> "$subdomain_single_file"
-        chaos -up 
+        chaos -up
         chaos -d $domain -v >> "$subdomain_single_file"
         # ffuf -u http://FUZZ.$domain -w "../source code/ffuf/n0kovo_subdomains_large.txt"
         print_separator
@@ -171,13 +183,14 @@ filtering_duplicate_sub_domain() {
         unique_subdomain_file=${unique_subdomain_array_files[$index]}
 
         print_intermediate "Processing $domain sub-domains in progress..."
-        print_intermediate "scanning subdomain using file : $subdomain_single_file"
+        print_intermediate "Scanning subdomains using file: $subdomain_single_file"
         
-        # Redirecting unique output to respective subdomain-file
         sort "$subdomain_single_file" | uniq >> "$unique_subdomain_file"
+        sort "$subdomain_single_file" | uniq >> $OUTPUT
         index=$((index + 1))
     done
-    print_success "Unique Domain are extracted Sucessfully !!! "
+    print_success "Unique Domains are extracted successfully!"
+    print_separator
 }
 
 active_domain_find() {
@@ -190,13 +203,13 @@ active_domain_find() {
         active_subdomain_file=${active_subdomain_array_files[$index]}
         final_subdomain_file=${complete_subdomain_info_array_files[$index]}
 
-        
+
         if grep -q 'Ubuntu' /etc/os-release; then
             cat $unique_subdomain_file | httpx >> $active_subdomain_file
         # Initial processing and counting
         else
             cat $unique_subdomain_file | httpx-toolkit >> $active_subdomain_file
-        fi 
+        fi
 
         site_count=$(wc -l < $active_subdomain_file)
 
@@ -218,10 +231,10 @@ active_domain_find() {
             print_separator
             if grep -q 'Kali' /etc/os-release; then
                 httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats"
-                cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file 
+                cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file
             else
                 httpx_argument="httpx -probe -sc -cname -ip -method -title -location -td -stats"
-                cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file 
+                cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file
             fi
         fi
 
@@ -233,11 +246,11 @@ active_domain_find() {
     print_success "ACTIVE Domain are filtered Sucessfully !!! "
 }
 
+
 deleting_others_scan() {
     print_separator
     print_init "STEP -3 : Deleting other subdomains files in progress..."
     rm -rf $scan_store_dir/*initial*.txt 
-    # rm -rf $scan_store_dir/*unique*.txt
 }
 
 main() {
@@ -249,7 +262,7 @@ main() {
     deleting_others_scan
 
     unset scan_store_dir all_subdomain_array_files unique_subdomain_array_files 
-    unset active_subdomain_array_files domains httpx_argument
+    unset active_subdomain_array_files domains
 }
 
 main "$@"

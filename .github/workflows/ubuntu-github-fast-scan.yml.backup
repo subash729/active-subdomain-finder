@@ -42,7 +42,7 @@ jobs:
         run : |
           export PDCP_API_KEY=${{ secrets.CHAOS_API_KEY }}
           chmod +x scan-filter-subdomain.sh
-          ./scan-filter-subdomain.sh
+          ./scan-filter-subdomain.sh -f ../domain-list.txt
 
       - name: pushing to mega cloud
         working-directory: scripts
