@@ -129,6 +129,20 @@ check_httpx-toolkit_installed() {
         return 1
     fi
 }
+check_rclone_installed() {
+    print_separator
+    print_header "7 - rclone"
+    print_separator
+    sleep 2
+    if command -v rclone &>/dev/null; then
+        print_success "rclone is already installed"
+        return 0
+    else
+        print_fail "rclone Package is missing"
+        return 1
+    fi
+}
+
 
 # ---------- Package installation start -------------
 
@@ -359,7 +373,6 @@ install_httpx-toolkit () {
         else
             print_fail "subfinder is not installed"
         fi
-
     else
         print_separator
         print_fail "Unsupported Linux distribution"
@@ -367,6 +380,34 @@ install_httpx-toolkit () {
     fi
 
 
+}
+install_rclone () {
+    if check_rclone_installed; then
+        return
+    fi
+
+    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
+    print_init "$os_description Detected on your system"
+    printf "\n"
+    print_intermediate "Installing rclone"
+    print_separator
+
+    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
+        sudo apt-get update
+        sudo apt install -y rclone
+        print_separator
+
+        if [ $? -eq 0 ]; then
+            print_success "rclone is now installed"
+        else
+            print_fail "rclone to install Figlet"
+        fi
+
+    else
+        print_separator
+        print_fail "Unsupported Linux distribution"
+        exit 1
+    fi
 }
 
 main() {
@@ -380,5 +421,7 @@ main() {
 
     # tool to find active or up webserver
     install_httpx-toolkit 
+    # copy files to google-drive
+    install_rclone
 }
 main

@@ -54,3 +54,23 @@ jobs:
           chmod +x scan-filter-subdomain.sh
           ./scan-filter-subdomain.sh
 
+  copy-to-drive:
+    runs-on: self-hosted
+    needs: scanning_subdomain
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Authenticate google-drive
+        working-directory: scripts 
+        run: |
+          chmod +x copy-to-drive.sh
+          ./copy-to-drive.sh -u ${{ secrets.DRIVE_USERNAME }} -p  ${{ secrets.DRIVE_PASSWORD }}
+      
+      - name: copying to googledrive
+        run: |
+          cd ~/information-gathering/
+          find . -name "*.txt" -exec rclone copy {} googledrive:/Website-scan --progress \;
+
+  
+
