@@ -44,7 +44,10 @@ jobs:
           chmod +x scan-filter-subdomain.sh
           ./scan-filter-subdomain.sh
 
-      - name: reading file
+      - name: pushing to mega cloud
+        working-directory: scripts
         run: |
-            ls -al
+          chmod +x mega-config.sh  
+          ./mega-config.sh -u ${{ secrets.MEGA_USERNAME }} -p ${{ secrets.MEGA_PASSWORD }} -s "$HOME/information-gathering/*.txt" -d /Website-scan 
+            
 
