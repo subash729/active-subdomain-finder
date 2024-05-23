@@ -289,19 +289,6 @@ install_chaos (){
         else
             print_fail "chaos to install Figlet"
         fi
-
-    elif grep -q 'Ubuntu' /etc/os-release; then
-        sudo apt-get update
-        sudo snap install go
-        go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-        sudo cp $HOME/go/bin/httpx-toolkit  /usr/bin/
-        print_separator
-        if [ $? -eq 0 ]; then
-            print_success "httpx-toolkit is now installed"
-        else
-            print_fail "httpx-toolkit is not installed"
-        fi
-
     else
         print_separator
         print_fail "Unsupported Linux distribution"
@@ -350,17 +337,27 @@ install_httpx-toolkit () {
     print_intermediate "Installing httpx-toolkit"
     print_separator
 
-    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
+    if grep -q 'Kali' /etc/os-release; then
         sudo apt-get update
         sudo apt install -y httpx-toolkit
-
-        
         print_separator
 
         if [ $? -eq 0 ]; then
             print_success "httpx-toolkit is now installed"
         else
             print_fail "httpx-toolkit to install Figlet"
+        fi
+    
+    elif grep -q 'Ubuntu' /etc/os-release; then
+        sudo apt-get update
+        sudo snap install go
+        go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+        sudo cp $HOME/go/bin/httpx  /usr/bin/
+        print_separator
+        if [ $? -eq 0 ]; then
+            print_success "httpx-toolkit is now installed"
+        else
+            print_fail "subfinder is not installed"
         fi
 
     else
