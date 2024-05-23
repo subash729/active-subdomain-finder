@@ -40,12 +40,8 @@ function print_fail {
     printf "\e[1m\e[31m%s\e[0m\n" "$message"  
     print_separator
 }
-
 # -------------Displaying Screen message in color  end ----------------
-
-
 # ---------- Package installation and Upgrade start -------------
-
 install_and_upgrade_figlet() {
     os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
     print_init "$os_description Detected on your system"
@@ -231,6 +227,30 @@ install_rclone () {
         print_fail "Unsupported Linux distribution"
         exit 1
     fi
+}
+
+install_mega-cmd() {
+    os_description=$(lsb_release -a 2>/dev/null | grep "Description:" | awk -F'\t' '{print $2}')
+    print_init "$os_description Detected on your system"
+    printf "\n"
+    print_intermediate "Installing mega-cmd"
+    print_separator
+
+    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
+	    wget https://mega.nz/linux/repo/xUbuntu_22.04/amd64/megacmd-xUbuntu_22.04_amd64.deb \
+		    && sudo apt install -y "$PWD/megacmd-xUbuntu_22.04_amd64.deb"
+    if [ $? -eq 0 ]; then
+            print_success "mega-cmd is now installed"
+        else
+            print_fail "mega-cmd is not installed"
+        fi
+
+    else
+        print_separator
+        print_fail "Unsupported Linux distribution"
+        exit 1
+    fi
+
 }
 
 main() {

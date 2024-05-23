@@ -422,7 +422,7 @@ install_rclone () {
     fi
 }
 
-install_mega-cmd{
+install_mega-cmd() {
     if check_mega-cmd_installed; then
         return
     fi
