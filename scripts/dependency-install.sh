@@ -211,7 +211,7 @@ install_subfinder(){
         ls $HOME
         echo "------------ home go directory --------------"
         tree -L 3 $HOME/go/
-        sudo cp $HOME/go/pkg/subfinder  /usr/bin/
+        sudo cp $HOME/go/bin/subfinder  /usr/bin/
         print_separator
         if [ $? -eq 0 ]; then
             print_success "subfinder is now installed"
@@ -286,8 +286,6 @@ install_chaos (){
 	    sudo apt install -y golang
         go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
         sudo cp $HOME/go/bin/chaos  /usr/bin/
-
-        
         print_separator
 
         if [ $? -eq 0 ]; then
