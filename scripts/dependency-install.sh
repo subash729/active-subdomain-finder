@@ -277,7 +277,7 @@ install_chaos (){
     print_intermediate "Installing chaos"
     print_separator
 
-    if grep -q 'Kali' /etc/os-release; then
+    if grep -q 'Kali\|Ubuntu' /etc/os-release; then
         sudo apt-get update
 	    sudo snap install go --classic
         go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
