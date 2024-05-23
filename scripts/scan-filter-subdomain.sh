@@ -135,9 +135,14 @@ active_domain_find() {
         active_subdomain_file=${active_subdomain_array_files[$index]}
         final_subdomain_file=${complete_subdomain_info_array_files[$index]}
 
-        cat $unique_subdomain_file | httpx-toolkit >> $active_subdomain_file
+        
+        if grep -q 'Ubuntu' /etc/os-release; then
+            cat $unique_subdomain_file | httpx >> $active_subdomain_file
         # Initial processing and counting
-        cat $unique_subdomain_file | httpx-toolkit >> $active_subdomain_file
+        else
+            cat $unique_subdomain_file | httpx-toolkit >> $active_subdomain_file
+        fi 
+
         site_count=$(wc -l < $active_subdomain_file)
 
         # Conditional execution based on word count
@@ -145,16 +150,19 @@ active_domain_find() {
             print_separator
             print_init "Only ### $site_count ### sub-domains are active, Displaying detailed info in console"
             print_separator
-            httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
-            cat $unique_subdomain_file | $httpx_argument
-
+            if grep -q 'Ubuntu' /etc/os-release; then
+                httpx_argument="httpx -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
+                cat $unique_subdomain_file | $httpx_argument
+            else
+                httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats -o $final_subdomain_file"
+                cat $unique_subdomain_file | $httpx_argument
+            fi
         else
             print_separator
             print_init "Huge no i.e. ### $site_count ### sub-domains are active, Running silently "
             print_separator
             httpx_argument="httpx-toolkit -probe -sc -cname -ip -method -title -location -td -stats"
-            cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file
-            
+            cat $unique_subdomain_file | $httpx_argument >> $final_subdomain_file 
         fi
 
         # Add logic to filter active subdomains and write to $active_subdomain_file
