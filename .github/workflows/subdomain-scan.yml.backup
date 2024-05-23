@@ -29,6 +29,7 @@ jobs:
       - name: amass config setup
         working-directory: "source code/amass" 
         run: |
+          mkdir -p $HOME/.config/amass/ 
           cp -r * $HOME/.config/amass/
           ls -al
 

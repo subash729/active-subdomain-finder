@@ -277,7 +277,7 @@ install_chaos (){
     print_intermediate "Installing chaos"
     print_separator
 
-    if grep -q 'Ubuntu\|Kali' /etc/os-release; then
+    if grep -q 'Kali' /etc/os-release; then
         sudo apt-get update
 	    sudo snap install go --classic
         go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
@@ -288,6 +288,18 @@ install_chaos (){
             print_success "chaos is now installed"
         else
             print_fail "chaos to install Figlet"
+        fi
+
+    elif grep -q 'Ubuntu' /etc/os-release; then
+        sudo apt-get update
+        sudo snap install go
+        go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+        sudo cp $HOME/go/bin/httpx-toolkit  /usr/bin/
+        print_separator
+        if [ $? -eq 0 ]; then
+            print_success "httpx-toolkit is now installed"
+        else
+            print_fail "httpx-toolkit is not installed"
         fi
 
     else
