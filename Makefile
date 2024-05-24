@@ -1,5 +1,7 @@
 SHELL := /bin/bash
 
+.DEFAULT_GOAL := help
+
 scanner-install: ## Install dependencies for the scanner
 	@bash scripts/dependency-install.sh
 
@@ -26,6 +28,7 @@ help:
 	@echo "  make scan-upload ARGS=\"-u subash@gmail.com -p password -s /home/jiwan/any_dir -d Mega_any_dir\""
 	@echo ""
 	@echo "Wildcard Upload Usage examples:"
-	@echo "  make scan-upload ARGS=\"-u subash@gmail.com -p password -s /home/subash/*.txt -d /Mega_any_dir1/dir_lvl_2\""
+	@echo "  make scan-upload ARGS=\"-u subash@gmail.com -p password -s \\\"/home/subash/*.txt\\\" -d /Mega_any_dir1/dir_lvl_2\""
 	@echo ""
-
+	@echo "./mega-config.sh -u subash@gmail.com -p password -s \\\"test/*.txt\\\" -d /ANY-Directory"
+	@echo ""

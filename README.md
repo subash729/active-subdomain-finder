@@ -1,11 +1,21 @@
 # Table of Contents
 
 - [Table of Contents](#table-of-contents)
-- [Project Topic](#project-topic)
+- [Active sub-domain Finder](#active-sub-domain-finder)
   - [Authors](#authors)
 - [Project Documentation](#project-documentation)
   - [Project Description](#project-description)
-  - [Init and Setup](#init-and-setup)
+  - [1.1 Local Init and Setup](#11-local-init-and-setup)
+    - [1.1.1  Local system](#111--local-system)
+    - [1.1.2 Scanning sub-domains](#112-scanning-sub-domains)
+    - [1.1.3 Uploading files to cloud](#113-uploading-files-to-cloud)
+- [2 Pipeline Setup](#2-pipeline-setup)
+  - [2.1 Repository setup](#21-repository-setup)
+  - [2.2 Secret and variable setup](#22-secret-and-variable-setup)
+  - [2.3 runner setup](#23-runner-setup)
+    - [Clone and setup repository](#clone-and-setup-repository)
+  - [1.2 Scanning](#12-scanning)
+  - [1.4](#14)
 - [Our Details](#our-details)
   - [🖥️🛠️ Support and 📞 Contact Information](#️️-support-and--contact-information)
   - [🚀 About Us](#-about-us)
@@ -14,9 +24,10 @@
   - [🔗 Contact Links](#-contact-links)
   - [📝 Feedback and Suggestions](#-feedback-and-suggestions)
  
-# Project Topic
+# Active sub-domain Finder
 
-A brief description of what this project does and who it's for
+The "Active Sub-domain Finder" script is designed to identify and filter active subdomains from a list of websites. Utilizing a suite of powerful tools, including ```figlet``` for banner display, ```subfinder```, ```amass```, and ```chaos``` for initial subdomain discovery, ```ffuf``` for fuzzing, and ```httpx-toolkit``` for probing and validating active subdomains, this script automates the entire scanning and filtering process. Additionally, it leverages ```rclone``` and ```mega-cmd``` for efficient data management and storage. The script ensures a comprehensive, automated approach to subdomain enumeration and validation, providing clear outputs and status messages in a color-coded format.
+
 
 ## Authors
 
@@ -24,14 +35,99 @@ A brief description of what this project does and who it's for
 - [Subash Chaudhary](https://www.github.com/subash729)
 
 # Project Documentation
+
 ## Project Description
+We are doing following task bu suing this tools and the task are written in sequential manner
+- Finding all sub-domain via many tools
+- Eliminating duplicate sub-domain
+- Finding active and running sub-domain
+- Uploading result to cloud storage
 
-- Light/dark mode toggle
-- Live previews
-- Fullscreen mode
-- Cross platform
+## 1.1 Local Init and Setup
+### 1.1.1  Local system
+```bash
+git clone https://github.com/subash729/active-subdomain-finder.git
+cd active-subdomain-finder
+make scanner-install
+```
+![alt text](screenshots/C1-0-local-repo-setup.png)
 
-## Init and Setup
+For other command use make help
+```bash
+make help
+```
+![alt text](screenshots/C1-1.0-make-help.png)
+
+### 1.1.2 Scanning sub-domains
+Let's scan by setting-up few basic things
+```
+echo "facebook.com" >> domain-list.txt
+echo "example.com" >> domain-list.txt
+
+# veryfying content of domain-list
+cat domain-list.txt
+export PDCP_API_KEY=xxxxx
+make scan-start 
+```
+Note: <br>
+chaos tool require API-key
+Manual : [chaos documentation](href="https://github.com/projectdiscovery/chaos-client") <br>
+API-Key : [cloud.projectdiscovery.io](https://cloud.projectdiscovery.io/?ref=api_key) <br>
+
+Setting up: CHAOS-API-KEY <br>
+![alt text](screenshots/C1-2.0-api-key-setup.png)
+Starting scan
+![alt text](screenshots/C1-2.0.1-domain-scan-setup.png)
+
+Scan Results : <br>
+Total sub-domain found <br>
+![alt text](screenshots/C1-2.0.2-finding-all-sub-domain.png)
+Finding Active sub-domain <br>
+silent scan <br>
+![alt text](screenshots/C1-2.0.3-silent-scan.png)
+Displyaing Detailed scan: <br>
+I had scanned other site i.e [usaa.com](https://www.usaa.com/).
+![alt text](screenshots/C1-2.0.4-usaa-detailed-scan.png)
+
+<B>Your scanned result will be stored at ```~/information-gathering/``` </B>
+```
+ls -al ~/information-gathering/
+```
+![alt text](screenshots/C1-2.0.5-scanned-output-file.png)
+
+### 1.1.3 Uploading files to cloud
+Uploading files to cloud to resolve issue of availabilty and sharing
+ ```
+#upload folder
+ make scan-upload ARGS="-u pingjiwan@gmail.com -p yourmeagpassword  -s /home/subash/information-gathering/ -d /Website-scan"
+
+# for specific file using random character
+ make scan-upload ARGS="-u subashtest@gmail.com -p yourmeagpassword -s \"/home/subash/information-gathering/*.txt\" -d /Website-scan"
+```
+<B>Uploading files</B><br>
+![alt text](screenshots/C1-3.0-mega-login-upload.png)
+<B>Verysfying files for public</B><br>
+![alt text](screenshots/C1-3.0.1-mega-file-access.png)
+
+# 2 Pipeline Setup
+## 2.1 Repository setup 
+
+## 2.2 Secret and variable setup
+
+## 2.3 runner setup 
+
+### Clone and setup repository
+Downloading my repository
+```bash
+git clone https://github.com/subash729/active-subdomain-finder.git
+cd active-subdomain-finder
+rm -rf .git
+```
+
+## 1.2 Scanning
+
+## 1.4 
+
 
 # Our Details
 <div align="justify">
