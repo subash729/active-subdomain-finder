@@ -25,9 +25,9 @@
   - [📝 Feedback and Suggestions](#-feedback-and-suggestions)
  
 # Active sub-domain Finder
-
-The "Active Sub-domain Finder" script is designed to identify and filter active subdomains from a list of websites. Utilizing a suite of powerful tools, including ```figlet``` for banner display, ```subfinder```, ```amass```, and ```chaos``` for initial subdomain discovery, ```ffuf``` for fuzzing, and ```httpx-toolkit``` for probing and validating active subdomains, this script automates the entire scanning and filtering process. Additionally, it leverages ```rclone``` and ```mega-cmd``` for efficient data management and storage. The script ensures a comprehensive, automated approach to subdomain enumeration and validation, providing clear outputs and status messages in a color-coded format.
-
+<div align="justify">
+The "Active Sub-domain Finder" script is designed to identify and filter active subdomains from a list of websites. Utilizing a suite of powerful tools, including <code>figlet</code> for banner display, <code>subfinder</code>, <code>amass</code>, and <code>chaos</code> for initial subdomain discovery, <code>ffuf</code> for fuzzing, and <code>httpx-toolkit</code> for probing and validating active subdomains, this script automates the entire scanning and filtering process. Additionally, it leverages <code>rclone</code> and <code>mega-cmd</code> for efficient data management and storage. The script ensures a comprehensive, automated approach to subdomain enumeration and validation, providing clear outputs and status messages in a color-coded format.
+</div>
 
 ## Authors
 
@@ -35,9 +35,13 @@ The "Active Sub-domain Finder" script is designed to identify and filter active 
 - [Subash Chaudhary](https://www.github.com/subash729)
 
 # Project Documentation
+<div align="justify">
+  The "Active Sub-domain Finder" script is designed to automate several critical tasks using a suite of powerful tools. It performs comprehensive subdomain discovery with tools like <code>subfinder</code>, <code>amass</code>, and <code>chaos</code> to find all possible subdomains. It then eliminates duplicate subdomains to ensure a clean dataset. Next, it uses <code>httpx-toolkit</code> to identify and validate active and running subdomains. Finally, the script employs <code>rclone</code> and <code>mega-cmd</code> to upload the results to cloud storage, ensuring efficient and secure data management. The entire process is streamlined and user-friendly, with clear, color-coded status messages and detailed usage instructions.
+</div>
+
 
 ## Project Description
-We are doing following task bu suing this tools and the task are written in sequential manner
+We are doing following task by using this tools and the task are written in sequential manner
 - Finding all sub-domain via many tools
 - Eliminating duplicate sub-domain
 - Finding active and running sub-domain
