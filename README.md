@@ -29,6 +29,7 @@
 The "Active Sub-domain Finder" script is designed to identify and filter active subdomains from a list of websites. Utilizing a suite of powerful tools, including <code>figlet</code> for banner display, <code>subfinder</code>, <code>amass</code>, and <code>chaos</code> for initial subdomain discovery, <code>ffuf</code> for fuzzing, and <code>httpx-toolkit</code> for probing and validating active subdomains, this script automates the entire scanning and filtering process. Additionally, it leverages <code>rclone</code> and <code>mega-cmd</code> for efficient data management and storage. The script ensures a comprehensive, automated approach to subdomain enumeration and validation, providing clear outputs and status messages in a color-coded format.
 </div>
 
+
 ## Authors
 
 - [Jiwan Bhattarai](https://www.linkedin.com/in/jiwanbhattarai/)

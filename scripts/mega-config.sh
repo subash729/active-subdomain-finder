@@ -103,6 +103,14 @@ taking_input() {
     fi
 }
 
+check_installation() {
+    if ! command -v mega-cmd &> /dev/null; then
+        print_fail "mega-cmd is not installed. Please install it and try again."
+        exit 1
+    fi
+    print_success "mega-cmd is installed."
+}
+
 # Function to configure rclone for Google Drive
 copy_to_mega() {
     print_separator
@@ -152,6 +160,7 @@ remove_config() {
 
 # Main function
 main() {
+    check_installation
     taking_input "$@"
     copy_to_mega
     public_share
