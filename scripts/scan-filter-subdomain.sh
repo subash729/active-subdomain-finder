@@ -263,8 +263,9 @@ display_final() {
         echo -n "Total sub-domain: "
         temp=$(wc -l $subdomain_single_file | cut -d " " -f 1)
         print_intermediate "$temp"
+        temp=$(wc -l $unique_subdomain_file | cut -d " " -f 1)
         echo -n "Total unique Sub-domain: "
-        print_intermediate "wc -l $unique_subdomain_file"
+        print_intermediate "$temp"
         echo -n "Total Active Sub-domain: "
         print_intermediate "wc -l $active_subdomain_file"
         index=$((index + 1))
