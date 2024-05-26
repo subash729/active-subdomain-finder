@@ -49,6 +49,6 @@ jobs:
         working-directory: scripts
         run: |
           chmod +x mega-config.sh  
-          ./mega-config.sh -u ${{ secrets.MEGA_USERNAME }} -p ${{ secrets.MEGA_PASSWORD }} -s "$HOME/information-gathering/*.txt" -d /Website-scan 
+          ./mega-config.sh -u ${{ secrets.MEGA_USERNAME }} -p ${{ secrets.MEGA_PASSWORD }} -s "$HOME/information-gathering/sub-domain-scan/" -d /Website-scan
             
 
