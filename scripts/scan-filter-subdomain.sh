@@ -261,7 +261,7 @@ display_final() {
         unique_subdomain_file=${unique_subdomain_array_files[$index]}
         active_subdomain_file=${active_subdomain_array_files[$index]}
         echo -n "Total sub-domain: "
-        temp=wc -l $subdomain_single_file
+        temp=$(wc -l $subdomain_single_file | cut -d " " -f 1)
         print_intermediate "$temp"
         echo -n "Total unique Sub-domain: "
         print_intermediate "wc -l $unique_subdomain_file"
