@@ -263,6 +263,5 @@ main() {
 
     unset scan_store_dir all_subdomain_array_files unique_subdomain_array_files 
     unset active_subdomain_array_files domains
-}
 
 main "$@"
