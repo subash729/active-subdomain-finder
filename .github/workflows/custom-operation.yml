@@ -1,0 +1,47 @@
+name: manual performing Individual task
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment
+        required: true
+        type: choice
+        options:
+          - 'upgrade-package'
+          - 'sub-domain-scanning'
+          - 'upload-files'
+
+jobs:
+  upgrade-package:
+    if: github.event.inputs.environment == 'upgrade-package'
+    runs-on: self-hosted
+    steps:
+      - name: Upgrade Package
+        working-directory: scripts
+        run: |
+            echo "Upgrading All scanning tools"
+            whoami
+            chmod +x upgrade-install.sh
+            sudo ./upgrade-install.sh
+  spawn-container:
+    if: github.event.inputs.environment == 'sub-domain-scanning'
+    runs-on: self-hosted
+    steps:
+      - name: Scanning sub-domains
+        working-directory: scripts 
+        run : |
+            export PDCP_API_KEY=${{ secrets.CHAOS_API_KEY }}
+            chmod +x scan-filter-subdomain.sh
+            ./scan-filter-subdomain.sh -f "../domain-list.txt"
+
+  push-images:
+    if: github.event.inputs.environment == 'upload-files'
+    runs-on: self-hosted
+    steps:
+        - name: Authenticating mega and copying file
+          working-directory: scripts
+          run: |
+              chmod +x mega-config.sh  
+              ./mega-config.sh -u ${{ secrets.MEGA_USERNAME }} -p ${{ secrets.MEGA_PASSWORD }} -s "$HOME/information-gathering/sub-domain-scan/" -d /Website-scan 
+          
