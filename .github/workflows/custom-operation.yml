@@ -11,6 +11,7 @@ on:
           - 'upgrade-package'
           - 'sub-domain-scanning'
           - 'upload-files'
+          - 'delete-all-local-scan-files'
 
 jobs:
   upgrade-package:
@@ -35,7 +36,7 @@ jobs:
             chmod +x scan-filter-subdomain.sh
             ./scan-filter-subdomain.sh -f "../domain-list.txt"
 
-  push-images:
+  upload-scan-report:
     if: github.event.inputs.environment == 'upload-files'
     runs-on: self-hosted
     steps:
@@ -44,4 +45,12 @@ jobs:
           run: |
               chmod +x mega-config.sh  
               ./mega-config.sh -u ${{ secrets.MEGA_USERNAME }} -p ${{ secrets.MEGA_PASSWORD }} -s "$HOME/information-gathering/sub-domain-scan/" -d /Website-scan 
+
+  delete-local-files:
+    if: github.event.inputs.environment == 'delete-local-files'
+    runs-on: self-hosted
+    steps:
+        - name: Deleting scanned filed stored at local system
+          run: | 
+              rm -rf "$HOME/information-gathering/sub-domain-scan/"
           
