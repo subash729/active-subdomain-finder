@@ -132,12 +132,15 @@ prerequisite_setup() {
     print_init "Creating Scan output Base directory and files at $scan_store_dir"
     print_separator
     mkdir -p $scan_store_dir
+    for domain in $domains; do
+        mkdir -p $scan_store_dir/$domain
+    done
 
     for domain in $domains; do
-        subdomain_single_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__initial_subdomain.txt
-        unique_subdomain_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__unique_subdomain.txt
-        active_subdomain_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__active_subdomain.txt
-        final_subdomain_file=$scan_store_dir/${domain}__$(date +%Y-%m-%d__%H:%M)__scan_info.txt
+        subdomain_single_file=$scan_store_dir/$domain/${domain}__$(date +%Y-%m-%d__%H:%M)__initial_subdomain.txt
+        unique_subdomain_file=$scan_store_dir/$domain/${domain}__$(date +%Y-%m-%d__%H:%M)__unique_subdomain.txt
+        active_subdomain_file=$scan_store_dir/$domain/${domain}__$(date +%Y-%m-%d__%H:%M)__active_subdomain.txt
+        final_subdomain_file=$scan_store_dir/$domain/${domain}__$(date +%Y-%m-%d__%H:%M)__scan_info.txt
 
         touch $subdomain_single_file
         touch $unique_subdomain_file
