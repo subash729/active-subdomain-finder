@@ -266,8 +266,9 @@ display_final() {
         temp=$(wc -l $unique_subdomain_file | cut -d " " -f 1)
         echo -n "Total unique Sub-domain: "
         print_intermediate "$temp"
+        temp=$(wc -l $active_subdomain_file | cut -d " " -f 1)
         echo -n "Total Active Sub-domain: "
-        print_intermediate "wc -l $active_subdomain_file"
+        print_intermediate "$temp"
         index=$((index + 1))
         print_separator
     done
