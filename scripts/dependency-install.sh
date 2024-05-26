@@ -144,7 +144,7 @@ check_rclone_installed() {
 }
 check_mega-cmd_installed() {
     print_separator
-    print_header "7 - rclone"
+    print_header "8 - mega-cmd"
     print_separator
     sleep 2
     if command -v mega-cmd &>/dev/null; then

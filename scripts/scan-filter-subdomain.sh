@@ -162,8 +162,12 @@ scanning_subdomain() {
         print_intermediate "Scanning $domain in progress..."
         subdomain_single_file=${all_subdomain_array_files[$index]}
         subfinder -d $domain >> "$subdomain_single_file"
+        echo "first tool scanned total subdomain"
+        wc -l $subdomain_single_file
         chaos -up
         chaos -d $domain -v >> "$subdomain_single_file"
+        echo "second tool scanned total subdomain"
+        wc -l $subdomain_single_file
         # ffuf -u http://FUZZ.$domain -w "../source code/ffuf/n0kovo_subdomains_large.txt"
         print_separator
         index=$((index + 1))
@@ -247,10 +251,32 @@ active_domain_find() {
 }
 
 
+
+display_final() {
+    print_init "Scanned - Results"
+    index=0
+    for domain in $domains; do
+        print_intermediate "Details about $domain sub-domains"
+        subdomain_single_file=${all_subdomain_array_files[$index]}
+        unique_subdomain_file=${unique_subdomain_array_files[$index]}
+        active_subdomain_file=${active_subdomain_array_files[$index]}
+        echo -n "Total sub-domain: "
+        print_intermediate "wc -l $subdomain_single_file"
+        echo -n "Total unique Sub-domain: "
+        print_intermediate "wc -l $unique_subdomain_file"
+        echo -n "Total Active Sub-domain: "
+        print_intermediate "wc -l $active_subdomain_file"
+        index=$((index + 1))
+        print_separator
+    done
+
+
+}
 deleting_others_scan() {
     print_separator
-    print_init "STEP -3 : Deleting other subdomains files in progress..."
     rm -rf $scan_store_dir/*initial*.txt 
+    print_separator
+    print_success "Unecessary temp files created during scan has been deleted sucessfully"
 }
 
 main() {
@@ -259,6 +285,7 @@ main() {
     scanning_subdomain
     filtering_duplicate_sub_domain
     active_domain_find
+    display_final
     deleting_others_scan
 
     unset scan_store_dir all_subdomain_array_files unique_subdomain_array_files 

@@ -259,6 +259,11 @@ main() {
     install_subfinder
     install_amass
     install_chaos
+    install_ffuf
+    install_httpx
+    install_rclone
+    install_mega
+	
     
 }
 main
