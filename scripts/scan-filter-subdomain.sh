@@ -282,8 +282,10 @@ display_final() {
 deleting_others_scan() {
     print_separator
     rm -rf $scan_store_dir/*initial*.txt 
+    print_fail "Unecessary temp files created during scan has been deleted sucessfully"
     print_separator
-    print_success "Unecessary temp files created during scan has been deleted sucessfully"
+    print_success "All Tasks are completed sucessfully"
+    print_separator
 }
 
 main() {
