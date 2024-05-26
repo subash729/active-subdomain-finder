@@ -165,12 +165,12 @@ scanning_subdomain() {
         print_intermediate "Scanning $domain in progress..."
         subdomain_single_file=${all_subdomain_array_files[$index]}
         subfinder -d $domain >> "$subdomain_single_file"
-        echo -n "first tool scanned total subdomain"
+        echo -n "first tool scanned total subdomain:  "
         wc -l $subdomain_single_file | cut -d " " -f 1
         echo ""
         chaos -up
         chaos -d $domain -v >> "$subdomain_single_file"
-        echo -n "second tool scanned total subdomain"
+        echo -n "second tool scanned total subdomain:  "
         wc -l $subdomain_single_file | cut -d " " -f 1
         echo " "
         # ffuf -u http://FUZZ.$domain -w "../source code/ffuf/n0kovo_subdomains_large.txt"
@@ -195,7 +195,9 @@ filtering_duplicate_sub_domain() {
         print_intermediate "Scanning subdomains using file: $subdomain_single_file"
         
         sort "$subdomain_single_file" | uniq >> "$unique_subdomain_file"
-        sort "$subdomain_single_file" | uniq >> $OUTPUT
+        if [[ -n $OUTPUT ]]; then
+            sort "$subdomain_single_file" | uniq >> $OUTPUT
+        fi
         index=$((index + 1))
     done
     print_success "Unique Domains are extracted successfully!"
