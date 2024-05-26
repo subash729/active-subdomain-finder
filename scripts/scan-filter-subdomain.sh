@@ -274,7 +274,8 @@ display_final() {
         index=$((index + 1))
         print_separator
     done
-    print_success "All scanned results are sgored at: $scan_store_dir  "
+    echo -n  "All scanned results are stored at:   "
+    print_success "$scan_store_dir"
     print_separator
 
 }
