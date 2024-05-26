@@ -51,7 +51,7 @@ check_figlet_installed() {
     print_separator
     print_header "1 - FIGLET"
     print_separator
-    sleep 2
+    sleep 1
     if command -v figlet &>/dev/null; then
         print_success "Figlet is already installed"
         return 0
@@ -65,7 +65,7 @@ check_subfinder_installed() {
     print_separator
     print_header "2 - SUBFINDER"
     print_separator
-    sleep 2
+    sleep 1
     if command -v subfinder &>/dev/null; then
         print_success "subfinder is already installed"
         return 0
@@ -79,7 +79,7 @@ check_amass_installed() {
     print_separator
     print_header "3 - AMASS"
     print_separator
-    sleep 2
+    sleep 1
     if command -v amass &>/dev/null; then
         print_success "amass is already installed"
         return 0
@@ -93,7 +93,7 @@ check_chaos_installed() {
     print_separator
     print_header "4 - CHAOS"
     print_separator
-    sleep 2
+    sleep 1
     if command -v chaos &>/dev/null; then
         print_success "chaos is already installed"
         return 0
@@ -106,7 +106,7 @@ check_ffuf_installed() {
     print_separator
     print_header "5 - ffuf"
     print_separator
-    sleep 2
+    sleep 1
     if command -v ffuf &>/dev/null; then
         print_success "ffuf is already installed"
         return 0
@@ -120,12 +120,15 @@ check_httpx-toolkit_installed() {
     print_separator
     print_header "6 - httpx-toolkit"
     print_separator
-    sleep 2
-    if command -v httpx-toolkit &>/dev/null; then
+    sleep 1
+    if command -v httpx &>/dev/null; then
+        print_success "httpx is already installed"
+        return 0
+    elif command -v httpx-toolkit &>/dev/null; then
         print_success "httpx-toolkit is already installed"
         return 0
     else
-        print_fail "httpx-toolkit Package is missing"
+        print_fail "Neither httpx nor httpx-toolkit is installed"
         return 1
     fi
 }
@@ -133,7 +136,7 @@ check_rclone_installed() {
     print_separator
     print_header "7 - rclone"
     print_separator
-    sleep 2
+    sleep 1
     if command -v rclone &>/dev/null; then
         print_success "rclone is already installed"
         return 0
@@ -146,7 +149,7 @@ check_mega-cmd_installed() {
     print_separator
     print_header "8 - mega-cmd"
     print_separator
-    sleep 2
+    sleep 1
     if command -v mega-cmd &>/dev/null; then
         print_success "mega-cmd is already installed"
         return 0
@@ -464,5 +467,9 @@ main() {
     install_rclone
     # tools to copy to mega
     install_mega-cmd
+
+    print_separator
+    print_success "All tools has been installed successfully"
+    print_separator
 }
 main
