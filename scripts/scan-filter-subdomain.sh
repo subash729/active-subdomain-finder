@@ -1,6 +1,6 @@
 #!/bin/bash
 
-scan_store_dir=$HOME/information-gathering
+scan_store_dir=$HOME/information-gathering/sub-domain-scan
 declare -a all_subdomain_array_files # for initial all subdomains
 declare -a unique_subdomain_array_files # removing duplicates and storing unique
 declare -a active_subdomain_array_files # filtering only active domains
@@ -162,12 +162,14 @@ scanning_subdomain() {
         print_intermediate "Scanning $domain in progress..."
         subdomain_single_file=${all_subdomain_array_files[$index]}
         subfinder -d $domain >> "$subdomain_single_file"
-        echo "first tool scanned total subdomain"
-        wc -l $subdomain_single_file
+        echo -n "first tool scanned total subdomain"
+        wc -l $subdomain_single_file | cut -d " " -f 1
+        echo ""
         chaos -up
         chaos -d $domain -v >> "$subdomain_single_file"
-        echo "second tool scanned total subdomain"
-        wc -l $subdomain_single_file
+        echo -n "second tool scanned total subdomain"
+        wc -l $subdomain_single_file | cut -d " " -f 1
+        echo " "
         # ffuf -u http://FUZZ.$domain -w "../source code/ffuf/n0kovo_subdomains_large.txt"
         print_separator
         index=$((index + 1))
@@ -272,7 +274,8 @@ display_final() {
         index=$((index + 1))
         print_separator
     done
-
+    print_success "All scanned results are sgored at: $scan_store_dir  "
+    print_separator
 
 }
 deleting_others_scan() {
